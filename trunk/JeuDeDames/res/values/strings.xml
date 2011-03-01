@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, JeuDeDames!</string>
     <string name="app_name">Jeu de dames</string>
+    <string name="btnSearch">Test Webservice</string>
 </resources>
