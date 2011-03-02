@@ -18,7 +18,8 @@ import android.widget.Button;
 
 public class JeuDeDames extends Activity {
 	
-	private String URL = "http://192.168.1.42/Projet/Android/JeuDeDames/Serveur/index.php";  
+	//private String URL = "http://192.168.1.42/Projet/Android/JeuDeDames/Serveur/index.php";  
+	private String URL = "http://www.google.fr";  
 	private String result = "";  
 	private String deviceId;  
 	private final String tag = "JeuDeDames : ";  
