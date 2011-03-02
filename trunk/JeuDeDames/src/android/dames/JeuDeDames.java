@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.app.Activity;
-import android.dames.webservices.PartieSAXParser;
+import android.dames.webservices.TourSAXParser;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.util.Log;
@@ -40,11 +40,6 @@ public class JeuDeDames extends Activity {
         setContentView(R.layout.main);
         deviceId = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
         
-//        final EditText txtSearch = (EditText) findViewById(R.id.txtSearch);
-//        txtSearch.setOnClickListener(new EditText.OnClickListener(){
-//        	public void onClick(View v){txtSearch.setText("");}
-//    	});
-
         final Button btnSearch = (Button) findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
@@ -65,7 +60,6 @@ public class JeuDeDames extends Activity {
 		try {
 			url = new URL(this.url);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return url;
@@ -95,7 +89,7 @@ public class JeuDeDames extends Activity {
 		}
 		
         /* Create a new ContentHandler and apply it to the XML-Reader*/
-        PartieSAXParser parserPartie = new PartieSAXParser();
+        TourSAXParser parserPartie = new TourSAXParser();
         xr.setContentHandler(parserPartie);
         
         // Début du parsing du contenu de l'URL
