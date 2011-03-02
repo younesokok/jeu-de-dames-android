@@ -1,9 +1,16 @@
 <?php
 header("Content-Type: text/xml" );
 echo '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n".'
-<partie>'."\n".'
-	<id>1</id>'."\n".'
-	<numeroTour>3</numeroTour>'."\n".'
-	<idPionJoue>2</idPionJoue>'."\n".'
-</partie>';
+<tour>'."\n".'
+	<idPartie>1</idPartie>'."\n".'
+	<numero>3</numero>'."\n".'
+	<deplacementsPionJoue>
+		<deplacement positionIn="1" positionOut="4" />
+		<deplacement positionIn="4" positionOut="2" />
+	</deplacementsPionJoue>'."\n".'
+	<pionsManges>'."\n".'
+		<pion position="3" />'."\n".'
+		<pion position="5" />'."\n".'
+	</pionsManges>'."\n".'
+</tour>';
 ?>
