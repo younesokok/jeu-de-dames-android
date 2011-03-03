@@ -5,4 +5,5 @@
     android:layout_height="fill_parent"
     >
 <Button android:id="@+id/btnSearch" android:text="@string/btnSearch" android:layout_width="match_parent" android:layout_height="60px"></Button>
+<Button android:id="@+id/btnDamier" android:text="@string/btnDamier" android:layout_width="match_parent" android:layout_height="60px"></Button>
 </LinearLayout>

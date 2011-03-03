@@ -3,5 +3,6 @@
     <string name="hello">Hello World, JeuDeDames!</string>
     <string name="app_name">Jeu de dames</string>
     <string name="btnSearch">Test Webservice</string>
+    <string name="btnDamier">Go to damier !</string>
     <string name="damier_layout_text_text"></string>
 </resources>

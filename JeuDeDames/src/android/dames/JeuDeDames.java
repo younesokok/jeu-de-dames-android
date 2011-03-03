@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.dames.webservices.TourSAXParser;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
@@ -28,34 +29,53 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class JeuDeDames extends Activity {
-	
+
 	private String url = "http://www.jeudedames.la-bnbox.fr";  
 	private String result = "";  
 	private String deviceId;  
 	private final String tag = "JeuDeDames : ";  
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        deviceId = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
-        
-        final Button btnSearch = (Button) findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(new Button.OnClickListener(){
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		deviceId = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
+
+		final Button btnSearch = (Button) findViewById(R.id.btnSearch);
+		btnSearch.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
 				callWebServicesXML();
 			}
-        });
-    }
-    
-    /**
-     * Retourne l'URL du service Web
-     * @param latitude latitude de la position
-     * @param longitude longitude de la position
-     * @param rayon rayon de recherche des déchèteries
-     * @return l'URL du service Web d'Ecoemballages
-     */
-    private URL buildUrlTour() {
+		});
+
+		final Button btnDamier = (Button) findViewById(R.id.btnDamier);
+		btnDamier.setOnClickListener(new Button.OnClickListener(){
+			public void onClick(View v) {
+
+				/**
+				 * Lancement de l'activite du jeu de dames
+				 */
+				Intent intent = new Intent(JeuDeDames.this, JeuDeDamesActivity.class);
+				Bundle bundle = new Bundle();
+				/* On met ce que l'on veut dans le bundle */
+				/*
+				bundle.putDouble("PARTYNUM", mPartyNum);
+				...
+				*/
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+		});
+	}
+
+	/**
+	 * Retourne l'URL du service Web
+	 * @param latitude latitude de la position
+	 * @param longitude longitude de la position
+	 * @param rayon rayon de recherche des déchèteries
+	 * @return l'URL du service Web d'Ecoemballages
+	 */
+	private URL buildUrlTour() {
 		URL url = null;
 		try {
 			url = new URL(this.url);
@@ -63,12 +83,12 @@ public class JeuDeDames extends Activity {
 			e.printStackTrace();
 		}
 		return url;
-    }
-    
-    private Tour parserXmlTour(URL url) {
-    	// Création du parseur SAX
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        SAXParser sp = null;
+	}
+
+	private Tour parserXmlTour(URL url) {
+		// Création du parseur SAX
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+		SAXParser sp = null;
 		try {
 			sp = spf.newSAXParser();
 		} catch (ParserConfigurationException e) {
@@ -79,30 +99,30 @@ public class JeuDeDames extends Activity {
 			e.printStackTrace();
 		}
 
-        // Récupération du lecteur XML du parseur SAX nouvellement créé
-        XMLReader xr = null;
+		// Récupération du lecteur XML du parseur SAX nouvellement créé
+		XMLReader xr = null;
 		try {
 			xr = sp.getXMLReader();
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-        /* Create a new ContentHandler and apply it to the XML-Reader*/
-        TourSAXParser parserPartie = new TourSAXParser();
-        xr.setContentHandler(parserPartie);
-        
-        // Début du parsing du contenu de l'URL
-        InputSource in = new InputSource();            
+
+		/* Create a new ContentHandler and apply it to the XML-Reader*/
+		TourSAXParser parserPartie = new TourSAXParser();
+		xr.setContentHandler(parserPartie);
+
+		// Début du parsing du contenu de l'URL
+		InputSource in = new InputSource();            
 		try {
 			// Récupération du contenu de l'URL
-            in.setByteStream(url.openStream());
+			in.setByteStream(url.openStream());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        in.setEncoding("ISO-8859-1"); // Changement du charset
-        try {
+		in.setEncoding("ISO-8859-1"); // Changement du charset
+		try {
 			xr.parse(in); // Parsing
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -111,18 +131,18 @@ public class JeuDeDames extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        // Fin du parsing
-        return parserPartie.getTour();
-    }
-    
-    public void callWebServicesXML() {
-    	URL url = buildUrlTour();
-    	Tour tourPrecedent = parserXmlTour(url);
-    	Log.i(tag, tourPrecedent.toString());
+		// Fin du parsing
+		return parserPartie.getTour();
+	}
+
+	public void callWebServicesXML() {
+		URL url = buildUrlTour();
+		Tour tourPrecedent = parserXmlTour(url);
+		Log.i(tag, tourPrecedent.toString());
 		Toast.makeText(this, tourPrecedent.toString(), Toast.LENGTH_SHORT).show();
-    }
-    public void callWebServiceREST(String q){
-    	HttpClient httpclient = new DefaultHttpClient();
+	}
+	public void callWebServiceREST(String q){
+		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet request = new HttpGet(url);
 		request.addHeader("deviceId", deviceId);
 		ResponseHandler<String> handler = new BasicResponseHandler();
@@ -136,5 +156,5 @@ public class JeuDeDames extends Activity {
 		httpclient.getConnectionManager().shutdown();
 		Log.i(tag, result);
 		Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
-    }
+	}
 }
