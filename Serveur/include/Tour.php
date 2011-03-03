@@ -27,7 +27,7 @@ class Tour
 		if (is_file($fichier)) {
 			return file_get_contents($fichier);
 		}
-		$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n".
+		$xml = '<?xml version="1.0" encoding="utf-8"?>'."\n".
 		'<tour>'."\n".
 			"\t".'<idPartie>'.$this->idPartie.'</idPartie>'."\n".
 			"\t".'<numero>'.$this->numero.'</numero>'."\n";
