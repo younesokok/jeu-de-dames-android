@@ -53,8 +53,15 @@ public class CommucationServeur implements CommucationServeurInterface {
 	public Tour sendTourFini(Tour tour) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "send");
+		params.put("idPartie", String.valueOf(tour.getIdPartie()));
+		params.put("numero", String.valueOf(tour.getNumero()));
+		params.put("deplacementsPionJoue", tour.getStringDeplacementsPionJoue());
+		params.put("pionsManges", tour.getStringPionsManges());
+		params.put("damesCreees", tour.getStringDamesCreees());
 		URL url = buildUrl(this.url, params);
+		Log.i(tag, url.toString());
 		Tour tourCourant = parserXmlTour(url);
+		Log.i(tag, tourCourant.toString());
 		return tourCourant;
 	}
 

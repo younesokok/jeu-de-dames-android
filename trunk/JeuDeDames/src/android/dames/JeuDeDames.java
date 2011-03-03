@@ -12,6 +12,7 @@ public class JeuDeDames extends Activity {
 	private String url = "http://www.jeudedames.la-bnbox.fr";  
 	private final String tag = "JeuDeDames : ";
 	private CommucationServeur communivationServeur;
+	private Tour tourCourant;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -22,8 +23,14 @@ public class JeuDeDames extends Activity {
 		final Button btnSearch = (Button) findViewById(R.id.btnSearch);
 		btnSearch.setOnClickListener(new Button.OnClickListener(){
 			public void onClick(View v) {
-				Tour tour = communivationServeur.getTourCourant();
-				Toast.makeText(getApplicationContext(), tour.toString(), Toast.LENGTH_SHORT).show();
+				if (null == tourCourant) {
+					tourCourant = communivationServeur.getTourCourant();
+				}
+				else {
+					tourCourant.incrNumero();
+					tourCourant = communivationServeur.sendTourFini(tourCourant);
+				}
+				Toast.makeText(getApplicationContext(), tourCourant.toString(), Toast.LENGTH_SHORT).show();
 			}
 		});
 
