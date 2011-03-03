@@ -3,6 +3,7 @@ package android.dames;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class JeuDeDamesActivity extends Activity {
 
@@ -22,6 +23,9 @@ public class JeuDeDamesActivity extends Activity {
         mDamierView = (DamierView) findViewById(R.id.damier);
         mDamierView.setTextView((TextView) findViewById(R.id.text));
 
+        // Juste pour dire que ça marche... A effacer
+		Toast.makeText(this, "Cool maintenant on affiche le damier !", Toast.LENGTH_SHORT).show();
+        
         if (savedInstanceState == null) {
             // We were just launched -- set up a new game
         	mDamierView.setMode(DamierView.READY);
