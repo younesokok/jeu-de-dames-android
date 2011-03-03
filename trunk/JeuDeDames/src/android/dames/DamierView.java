@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.TextView;
 
 public class DamierView extends PlateauView {
@@ -47,7 +48,8 @@ public class DamierView extends PlateauView {
 		setFocusable(true);
 		Resources r = this.getContext().getResources();
 
-		resetCases(6);
+		resetCases(3);
+		Log.i("Debug", "Avant loadCases");
 		loadCases(BLANCHE_VIDE, r.getDrawable(R.drawable.case_blanche));
 		loadCases(NOIRE_VIDE, r.getDrawable(R.drawable.case_noire));
 		/*
