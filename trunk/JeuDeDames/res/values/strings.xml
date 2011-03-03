@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, JeuDeDames!</string>
-    <string name="app_name">Jeu de dames</string>
-    <string name="btnSearch">Test Webservice</string>
-    <string name="btnDamier">Go to damier !</string>
-    <string name="damier_layout_text_text"></string>
+	<string name="hello">Hello World, JeuDeDames!</string>
+	<string name="app_name">Jeu de dames</string>
+	<string name="btnSearch">Test Webservice</string>
+	<string name="btnDamier">Go to damier !</string>
+	<string name="damier_layout_text_text"></string>
+	<string name="mode_ready">Jeu de Dames\nAppuyez en Haut pour jouer</string>
+	<string name="mode_pause">Pause\nAppuyez en Haut pour reprendre</string>
+	<string name="mode_lose_prefix">Game Over\nScore: </string>
+	<string name="mode_lose_suffix">\nAppuyez en Haut pour rejouer</string>
 </resources>

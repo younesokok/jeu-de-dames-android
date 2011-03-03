@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.TextView;
 
 public class DamierView extends PlateauView {
@@ -44,7 +45,12 @@ public class DamierView extends PlateauView {
 	 */
 	private int mScoreBlanc;
 	private int mScoreNoir;
-
+	
+    /**
+     * Texte a afficher
+     */
+    private TextView mStatusText;
+    
 	public DamierView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initDamierView();
@@ -170,9 +176,31 @@ public class DamierView extends PlateauView {
 
 	}
 
-	public void setMode(int ready2) {
-		// TODO Auto-generated method stub
+	public void setMode(int newMode) {
+        int oldMode = mMode;
+        mMode = newMode;
 
+        if (newMode == RUNNING & oldMode != RUNNING) {
+            mStatusText.setVisibility(View.INVISIBLE);
+            update();
+            return;
+        }
+
+        Resources res = getContext().getResources();
+        CharSequence str = "";
+        if (newMode == PAUSE) {
+            str = res.getText(R.string.mode_pause);
+        }
+        if (newMode == READY) {
+            str = res.getText(R.string.mode_ready);
+        }
+        if (newMode == LOSE) {
+            str = res.getString(R.string.mode_lose_prefix) + mScoreBlanc + "/" + mScoreNoir
+                  + res.getString(R.string.mode_lose_suffix);
+        }
+
+        mStatusText.setText(str);
+        mStatusText.setVisibility(View.VISIBLE);
 	}
 
 	public Bundle saveState() {
