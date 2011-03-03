@@ -17,12 +17,12 @@ public class PlateauView extends View {
 	private int mTailleCase = 30;
 	private static int mNbCases = 10;
 	private static int mMarge = 0;
-	/* Offset du début de damier */
+	/* Offset du d√©but de damier */
 	private static int mXOffset;
 	private static int mYOffset;
 	/* Tableau de cases */
 	private int[][] mTableauCases = new int[10][10]; 
-	/* Tableau contenant les différentes types de cases */
+	/* Tableau contenant les diff√©rentes types de cases */
     private Bitmap[] mTypeCases; 
 
     private final Paint mPaint = new Paint();
@@ -44,7 +44,7 @@ public class PlateauView extends View {
     }
 	
 	/**
-	 * Methode chargeant les différentes cases
+	 * Methode chargeant les diff√©rentes cases
 	 * @param typeCase
 	 * @param sprite
 	 */

@@ -38,7 +38,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 		this.url = url;
 	}
 
-	/* --- Méthodes --- */
+	/* --- MÃ©thodes --- */
 	@Override
 	public Tour getTourCourant() {
 		HashMap<String, String> params = new HashMap<String, String>();
@@ -90,7 +90,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 	}
 	
 	private Tour parserXmlTour(URL url) {
-		// Création du parseur SAX
+		// CrÃ©ation du parseur SAX
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		SAXParser sp = null;
 		try {
@@ -101,7 +101,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 			e.printStackTrace();
 		}
 
-		// Récupération du lecteur XML du parseur SAX nouvellement créé
+		// RÃ©cupÃ©ration du lecteur XML du parseur SAX nouvellement crÃ©Ã©
 		XMLReader xr = null;
 		try {
 			xr = sp.getXMLReader();
@@ -113,10 +113,10 @@ public class CommucationServeur implements CommucationServeurInterface {
 		TourSAXParser parserPartie = new TourSAXParser();
 		xr.setContentHandler(parserPartie);
 
-		// Début du parsing du contenu de l'URL
+		// DÃ©but du parsing du contenu de l'URL
 		InputSource in = new InputSource();            
 		try {
-			// Récupération du contenu de l'URL
+			// RÃ©cupÃ©ration du contenu de l'URL
 			in.setByteStream(url.openStream());
 		} catch (IOException e) {
 			e.printStackTrace();

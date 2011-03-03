@@ -9,11 +9,11 @@ import android.dames.Tour;
 public class TourSAXParser extends DefaultHandler {
 	/* --- Attributs --- */
     /**
-     * Partie récupérée via le fichier XML
+     * Partie rÃ©cupÃ©rÃ©e via le fichier XML
      */
     private Tour tour;
 	/**
-	 * Buffer permettant de récupérer les données des balises
+	 * Buffer permettant de rÃ©cupÃ©rer les donnÃ©es des balises
 	 */
 	private StringBuffer buffer;
 
@@ -23,7 +23,7 @@ public class TourSAXParser extends DefaultHandler {
 		super();
 	}
 	
-	/* --- Méthodes --- */
+	/* --- MÃ©thodes --- */
 	/**
      * Evenement recu a chaque fois que l'analyseur rencontre une balise xml ouvrante.
      * @param nameSpaceURI l'url de l'espace de nommage.

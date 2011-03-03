@@ -28,24 +28,24 @@ public class Tour {
 		this.damesCreees = damesCreees;
 	}
 	
-	/* --- Méthodes --- */
+	/* --- MÃ©thodes --- */
 	
 	/* --- Getter, setter --- */
 	public String toString() {
 		StringBuffer sb = new StringBuffer("Tour "+numero+" de la partie "+idPartie+" : \n");
-		sb.append("Déplacements du pion joué : \n");
+		sb.append("DÃ©placements du pion jouÃ© : \n");
 		for (Entry<Integer, Integer> deplacement : deplacementsPionJoue.entrySet()) {
-			sb.append("de la case "+deplacement.getKey()+" à la case "+deplacement.getValue()+"\n");
+			sb.append("de la case "+deplacement.getKey()+" Ã  la case "+deplacement.getValue()+"\n");
 		}
 		sb.append(getStringDeplacementsPionJoue()+"\n");
-		sb.append("Pions mangés : \n");
+		sb.append("Pions mangÃ©s : \n");
 		for (Integer pion : pionsManges) {
 			sb.append("pion de la case "+pion+"\n");
 		}
 		sb.append(getStringPionsManges()+"\n");
-		sb.append("Dames créées : \n");
+		sb.append("Dames crÃ©Ã©es : \n");
 		for (Integer dame : damesCreees) {
-			sb.append("dame à la case "+dame+"\n");
+			sb.append("dame Ã  la case "+dame+"\n");
 		}
 		sb.append(getStringDamesCreees()+"\n");
 		return sb.toString();

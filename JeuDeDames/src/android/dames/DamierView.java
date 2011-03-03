@@ -21,7 +21,7 @@ public class DamierView extends PlateauView {
 	public static final int LOSE = 3;
 	
     /**
-     * On definit les différents types de cases
+     * On definit les diff√©rents types de cases
      */
     private static final int CASE_NOIR = 1;
     private static final int CASE_BLANC = 2;
@@ -99,7 +99,7 @@ public class DamierView extends PlateauView {
 
 	
     /**
-     * Mets à jour les pions si necessaire.
+     * Mets √† jour les pions si necessaire.
      */
     public void update() {
         if (mMode == RUNNING) {
