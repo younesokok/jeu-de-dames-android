@@ -86,9 +86,13 @@ public class DamierView extends PlateauView {
                 /*
                  * Au debut ou en fin de partie on relance le jeu
                  */
+Log.i("Debug", "Appel d'init");
                 initNewGame();
+Log.i("Debug", "Appel de set Mode RUNNING");
                 setMode(RUNNING);
+Log.i("Debug", "Appel d'update");
                 update();
+Log.i("Debug", "Fin d'update");
                 return (true);
             }
             if (mMode == PAUSE) {
@@ -115,8 +119,6 @@ public class DamierView extends PlateauView {
         	updateDamesNoir();
         	updateDamesBlanc();
             }
-            DamierView.this.update();
-            DamierView.this.invalidate();
         }
 
 	private void updatePionsNoir() {
@@ -166,14 +168,8 @@ public class DamierView extends PlateauView {
         mScoreNoir = 0;
     }
     
-	public void setTextView(TextView findViewById) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void restoreState(Bundle map) {
-		// TODO Auto-generated method stub
-
+	public void setTextView(TextView newTextView) {
+        mStatusText = newTextView;
 	}
 
 	public void setMode(int newMode) {
@@ -206,6 +202,11 @@ public class DamierView extends PlateauView {
 	public Bundle saveState() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void restoreState(Bundle map) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
