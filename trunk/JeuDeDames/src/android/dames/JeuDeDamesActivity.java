@@ -3,7 +3,6 @@ package android.dames;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class JeuDeDamesActivity extends Activity {
 
