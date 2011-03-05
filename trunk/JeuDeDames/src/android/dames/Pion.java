@@ -30,8 +30,15 @@ public class Pion {
 		type = 0;
 	}
 
-	public boolean equals(Pion aTester) {
+	public boolean equalsPosition(Pion aTester) {
 		if (x == aTester.x && y == aTester.y) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean equals(Pion aTester) {
+		if (x == aTester.x && y == aTester.y && type == aTester.type) {
 			return true;
 		}
 		return false;
