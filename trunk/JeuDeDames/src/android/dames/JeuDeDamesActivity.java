@@ -28,9 +28,9 @@ public class JeuDeDamesActivity extends Activity {
         	mDamierView.setMode(DamierView.READY);
         } else {
             // We are being restored
-            Bundle map = savedInstanceState.getBundle(mBundleKey);
-            if (map != null) {
-            	mDamierView.restoreState(map);
+            Bundle bundle_damier = savedInstanceState.getBundle(mBundleKey);
+            if (bundle_damier != null) {
+            	mDamierView.restoreState(bundle_damier);
             } else {
             	mDamierView.setMode(DamierView.PAUSE);
             }

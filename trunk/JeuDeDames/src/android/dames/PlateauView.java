@@ -1,28 +1,27 @@
 package android.dames;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 public class PlateauView extends View {
 
+	// ----------------------- Initialisation -------------------- //
+
 	/* Parametres des cases */
 	private int mTailleCase = 30;
-	private static int mNbCases = 10;
+	protected static int mNbCases = 10;
 	private static int mMarge = 0;
 	/* Offset du début de damier */
 	private static int mXOffset;
 	private static int mYOffset;
 	/* Tableau de cases */
 	private int[][] mTableauCases = new int[10][10]; 
-	/* Tableau contenant les différentes types de cases */
+	/* Tableau contenant les representations des différentes types de cases */
     private Bitmap[] mTypeCases; 
 
     private final Paint mPaint = new Paint();
@@ -96,5 +95,9 @@ public class PlateauView extends View {
 
 	public void setCase(int type, int x, int y) {
         mTableauCases[x][y] = type;		
+	}
+	
+	public void setActif(int x, int y) {
+        mTableauCases[x][y] = (mTableauCases[x][y])+6;		
 	}
 }
