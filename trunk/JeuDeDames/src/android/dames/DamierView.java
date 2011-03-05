@@ -34,6 +34,7 @@ public class DamierView extends PlateauView {
 	/**
 	 * On definit les différents types de cases
 	 */
+	private static final int PION_INDEFINI = 0; /* Pointeur de selection */
 	private static final int CASE_BLANC = 1;
 	private static final int CASE_NOIR = 2;
 	private static final int PION_BLANC = 3;
@@ -51,17 +52,23 @@ public class DamierView extends PlateauView {
 	 * mPionsXXXX : liste des coordonnes des Pions de couleur XXXX
 	 * mDamesXXXX : liste des coordonnes des Dames de couleur XXXX
 	 */
-	private ArrayList<Coordonnees> mPionsNoir = new ArrayList<Coordonnees>();
-	private ArrayList<Coordonnees> mPionsBlanc = new ArrayList<Coordonnees>();
-	private ArrayList<Coordonnees> mDamesNoir = new ArrayList<Coordonnees>();
-	private ArrayList<Coordonnees> mDamesBlanc = new ArrayList<Coordonnees>();
-	private ArrayList<Coordonnees> mDeplacements = new ArrayList<Coordonnees>();
+	private ArrayList<Pion> mPionsNoir = new ArrayList<Pion>();
+	private ArrayList<Pion> mPionsBlanc = new ArrayList<Pion>();
+	private ArrayList<Pion> mDeplacements = new ArrayList<Pion>();
 
 	/**
 	 * Scores des joueurs
 	 */
 	private int mScoreBlanc;
 	private int mScoreNoir;
+
+	/**
+	 * Info sur le joueur courrent
+	 */
+	private int mCouleurJoeur;
+	private static final int BLANC = 0;
+	private static final int NOIR = 1;
+	private static final int OBSERVATEUR = 2;
 
 	/**
 	 * Texte a afficher
@@ -95,20 +102,20 @@ public class DamierView extends PlateauView {
 		/* On vide les listes de pions et dames */
 		mPionsNoir.clear();
 		mPionsBlanc.clear();
-		mDamesNoir.clear();
-		mDamesBlanc.clear();
 
 		/* On initialise les listes de pions */
 		for(int i=0;i<5;i++) {
 			for(int j=0;j<4;j++){
-				mPionsNoir.add(new Coordonnees((2*i)+(1+j)%2,j));
-				mPionsBlanc.add(new Coordonnees((2*i)+j%2,9-j));
+				mPionsNoir.add(new Pion((2*i)+(1+j)%2,j, PION_NOIR));
+				mPionsBlanc.add(new Pion((2*i)+j%2,9-j, PION_BLANC));
 			}
 		}
 		mScoreBlanc = 0;
 		mScoreNoir = 0;
+		mCouleurJoeur = BLANC;
+
 		/* Liste des déplacements courants */
-		mDeplacements.add(new Coordonnees(0,9));
+		mDeplacements.add(new Pion(0, 9));
 	}
 
 	public void setTextView(TextView newTextView) {
@@ -122,11 +129,9 @@ public class DamierView extends PlateauView {
 	public Bundle saveState() {
 		Bundle bundle_damier = new Bundle();
 
-		bundle_damier.putIntArray("mPionsNoir", coordArrayListToArray(mPionsNoir));
-		bundle_damier.putIntArray("mPionsBlanc", coordArrayListToArray(mPionsBlanc));
-		bundle_damier.putIntArray("mDamesNoir", coordArrayListToArray(mDamesNoir));
-		bundle_damier.putIntArray("mDamesBlanc", coordArrayListToArray(mDamesBlanc));
-		bundle_damier.putIntArray("mSelection", coordArrayListToArray(mDeplacements));
+		bundle_damier.putIntArray("mPionsNoir", pionArrayListToArray(mPionsNoir));
+		bundle_damier.putIntArray("mPionsBlanc", pionArrayListToArray(mPionsBlanc));
+		bundle_damier.putIntArray("mSelection", pionArrayListToArray(mDeplacements));
 		bundle_damier.putInt("mScoreNoir", mScoreNoir);
 		bundle_damier.putInt("mScoreBlanc", mScoreBlanc);
 
@@ -140,11 +145,9 @@ public class DamierView extends PlateauView {
 	public void restoreState(Bundle bundle_damier) {
 		setMode(PAUSE);
 
-		mPionsNoir = coordArrayToArrayList(bundle_damier.getIntArray("mPionsNoir"));
-		mPionsBlanc = coordArrayToArrayList(bundle_damier.getIntArray("mPionsBlanc"));
-		mDamesNoir = coordArrayToArrayList(bundle_damier.getIntArray("mDamesNoir"));
-		mDamesBlanc = coordArrayToArrayList(bundle_damier.getIntArray("mDamesBlanc"));
-		mDeplacements = coordArrayToArrayList(bundle_damier.getIntArray("mSelection"));
+		mPionsNoir = pionArrayToArrayList(bundle_damier.getIntArray("mPionsNoir"));
+		mPionsBlanc = pionArrayToArrayList(bundle_damier.getIntArray("mPionsBlanc"));
+		mDeplacements = pionArrayToArrayList(bundle_damier.getIntArray("mSelection"));
 		mScoreNoir = bundle_damier.getInt("mScoreNoir");
 		mScoreBlanc = bundle_damier.getInt("mScoreBlanc");
 	}
@@ -183,46 +186,42 @@ public class DamierView extends PlateauView {
 			clearCases();
 			updatePionsNoir();
 			updatePionsBlanc();
-			updateDamesNoir();
-			updateDamesBlanc();
 		}
 		if(mEtat==SELECT) {
-			setActif(mDeplacements.get(0).getX(), mDeplacements.get(0).getY());
+			updateDeplacements();
 		}
 		invalidate();
 	}
 
 	private void updatePionsNoir() {
 		int index = 0;
-		for (Coordonnees c : mPionsNoir) {
-			setCase(PION_NOIR, c.getX(), c.getY());
-			index++;
-		}		
-	}
-
-	private void updatePionsBlanc() {
-		int index = 0;
-		for (Coordonnees c : mPionsBlanc) {
-			setCase(PION_BLANC, c.getX(), c.getY());
+		for (Pion p : mPionsNoir) {
+			setCase(p.getType(), p.getX(), p.getY());
+			setCase(p.getType(), p.getX(), p.getY());
 			index++;
 		}
 	}
 
-	private void updateDamesNoir() {
+	private void updatePionsBlanc() {
 		int index = 0;
-		for (Coordonnees c : mDamesNoir) {
-			setCase(DAME_NOIR, c.getX(), c.getY());
+		for (Pion p : mPionsBlanc) {
+			setCase(p.getType(), p.getX(), p.getY());
+			setCase(p.getType(), p.getX(), p.getY());
+			index++;
+		}
+	}
+
+	private void updateDeplacements() {
+		int index = 0;
+		for (Pion p : mDeplacements) {
+			if(p.getType()==PION_INDEFINI)
+				setActif(p.getX(), p.getY());
+			else setCase(p.getType(), p.getX(), p.getY());
 			index++;
 		}		
 	}
 
-	private void updateDamesBlanc() {
-		int index = 0;
-		for (Coordonnees c : mDamesBlanc) {
-			setCase(DAME_BLANC, c.getX(), c.getY());
-			index++;
-		}		
-	}
+
 
 	// ----------------------- Contrôleur -------------------- //
 
@@ -298,6 +297,26 @@ public class DamierView extends PlateauView {
 			}
 		}
 
+		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+			if(mMode==RUNNING) {
+				if(mEtat==SELECT) {
+					if(mCouleurJoeur==BLANC) {
+						int index = 0;
+						for (Pion p : mPionsBlanc) {
+							if(p.equals(mDeplacements.get(mDeplacements.size()-1))){
+								mDeplacements.remove(mDeplacements.size()-1);
+								mDeplacements.add(new Pion(p.getX(),p.getY()));
+								mDeplacements.add(new Pion(p.getX(),p.getY(),p.getType()));
+							}
+							index++;
+						}	
+					}
+					update();
+					return(true);
+				}
+			}
+		}
+
 		return super.onKeyDown(keyCode, msg);
 	}
 
@@ -338,13 +357,14 @@ public class DamierView extends PlateauView {
 	 * @return : a simple array containing the x/y values of the coordinates
 	 * as [x1,y1,x2,y2,x3,y3...]
 	 */
-	private int[] coordArrayListToArray(ArrayList<Coordonnees> cvec) {
+	private int[] pionArrayListToArray(ArrayList<Pion> cvec) {
 		int count = cvec.size();
-		int[] rawArray = new int[count * 2];
+		int[] rawArray = new int[count * 3];
 		for (int index = 0; index < count; index++) {
-			Coordonnees c = cvec.get(index);
-			rawArray[2 * index] = c.getX();
-			rawArray[2 * index + 1] = c.getY();
+			Pion c = cvec.get(index);
+			rawArray[3 * index] = c.getX();
+			rawArray[3 * index + 1] = c.getY();
+			rawArray[3 * index + 1] = c.getType();
 		}
 		return rawArray;
 	}
@@ -356,15 +376,15 @@ public class DamierView extends PlateauView {
 	 * @param rawArray : [x1,y1,x2,y2,...]
 	 * @return a ArrayList of Coordinates
 	 */
-	private ArrayList<Coordonnees> coordArrayToArrayList(int[] rawArray) {
-		ArrayList<Coordonnees> coordArrayList = new ArrayList<Coordonnees>();
+	private ArrayList<Pion> pionArrayToArrayList(int[] rawArray) {
+		ArrayList<Pion> pionArrayList = new ArrayList<Pion>();
 
-		int coordCount = rawArray.length;
-		for (int index = 0; index < coordCount; index += 2) {
-			Coordonnees c = new Coordonnees(rawArray[index], rawArray[index + 1]);
-			coordArrayList.add(c);
+		int pionCount = rawArray.length;
+		for (int index = 0; index < pionCount; index += 3) {
+			Pion c = new Pion(rawArray[index], rawArray[index + 1], rawArray[index + 2]);
+			pionArrayList.add(c);
 		}
-		return coordArrayList;
+		return pionArrayList;
 	}
 
 
