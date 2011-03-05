@@ -1,15 +1,15 @@
 package android.dames;
 
-public class Coordonnees {
+public class Coordonnees_a_supprimer {
 	private int x;
 	private int y;
 
-	public Coordonnees(int newX, int newY) {
+	public Coordonnees_a_supprimer(int newX, int newY) {
 		x = newX;
 		y = newY;
 	}
 
-	public boolean equals(Coordonnees aTester) {
+	public boolean equals(Coordonnees_a_supprimer aTester) {
 		if (x == aTester.x && y == aTester.y) {
 			return true;
 		}
