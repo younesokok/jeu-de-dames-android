@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -56,7 +55,7 @@ public class DamierView extends PlateauView {
 	private ArrayList<Coordonnees> mPionsBlanc = new ArrayList<Coordonnees>();
 	private ArrayList<Coordonnees> mDamesNoir = new ArrayList<Coordonnees>();
 	private ArrayList<Coordonnees> mDamesBlanc = new ArrayList<Coordonnees>();
-	private ArrayList<Coordonnees> mSelection = new ArrayList<Coordonnees>();
+	private ArrayList<Coordonnees> mDeplacements = new ArrayList<Coordonnees>();
 
 	/**
 	 * Scores des joueurs
@@ -108,7 +107,8 @@ public class DamierView extends PlateauView {
 		}
 		mScoreBlanc = 0;
 		mScoreNoir = 0;
-		mSelection.add(new Coordonnees(0,9));
+		/* Liste des déplacements courants */
+		mDeplacements.add(new Coordonnees(0,9));
 	}
 
 	public void setTextView(TextView newTextView) {
@@ -126,7 +126,7 @@ public class DamierView extends PlateauView {
 		bundle_damier.putIntArray("mPionsBlanc", coordArrayListToArray(mPionsBlanc));
 		bundle_damier.putIntArray("mDamesNoir", coordArrayListToArray(mDamesNoir));
 		bundle_damier.putIntArray("mDamesBlanc", coordArrayListToArray(mDamesBlanc));
-		bundle_damier.putIntArray("mSelection", coordArrayListToArray(mSelection));
+		bundle_damier.putIntArray("mSelection", coordArrayListToArray(mDeplacements));
 		bundle_damier.putInt("mScoreNoir", mScoreNoir);
 		bundle_damier.putInt("mScoreBlanc", mScoreBlanc);
 
@@ -144,7 +144,7 @@ public class DamierView extends PlateauView {
 		mPionsBlanc = coordArrayToArrayList(bundle_damier.getIntArray("mPionsBlanc"));
 		mDamesNoir = coordArrayToArrayList(bundle_damier.getIntArray("mDamesNoir"));
 		mDamesBlanc = coordArrayToArrayList(bundle_damier.getIntArray("mDamesBlanc"));
-		mSelection = coordArrayToArrayList(bundle_damier.getIntArray("mSelection"));
+		mDeplacements = coordArrayToArrayList(bundle_damier.getIntArray("mSelection"));
 		mScoreNoir = bundle_damier.getInt("mScoreNoir");
 		mScoreBlanc = bundle_damier.getInt("mScoreBlanc");
 	}
@@ -187,7 +187,7 @@ public class DamierView extends PlateauView {
 			updateDamesBlanc();
 		}
 		if(mEtat==SELECT) {
-			setActif(mSelection.get(0).getX(), mSelection.get(0).getY());
+			setActif(mDeplacements.get(0).getX(), mDeplacements.get(0).getY());
 		}
 		invalidate();
 	}
@@ -253,8 +253,8 @@ public class DamierView extends PlateauView {
 			// Si jamais on est dans le mode RUNNING
 			if(mMode==RUNNING) {
 				if(mEtat==SELECT) {
-					if (mSelection.get(mSelection.size()-1).getY()>0){
-						mSelection.get(mSelection.size()-1).setY(mSelection.get(mSelection.size()-1).getY()-1);
+					if (mDeplacements.get(mDeplacements.size()-1).getY()>0){
+						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()-1);
 					}
 					update();
 					return(true);
@@ -265,8 +265,8 @@ public class DamierView extends PlateauView {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 			if(mMode==RUNNING) {
 				if(mEtat==SELECT) {
-					if (mSelection.get(mSelection.size()-1).getY()<mNbCases-1){
-						mSelection.get(mSelection.size()-1).setY(mSelection.get(mSelection.size()-1).getY()+1);
+					if (mDeplacements.get(mDeplacements.size()-1).getY()<mNbCases-1){
+						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()+1);
 					}
 					update();
 					return(true);
@@ -277,8 +277,8 @@ public class DamierView extends PlateauView {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			if(mMode==RUNNING) {
 				if(mEtat==SELECT) {
-					if (mSelection.get(mSelection.size()-1).getX()>0){
-						mSelection.get(mSelection.size()-1).setX(mSelection.get(mSelection.size()-1).getX()-1);
+					if (mDeplacements.get(mDeplacements.size()-1).getX()>0){
+						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()-1);
 					}
 					update();
 					return(true);
@@ -289,8 +289,8 @@ public class DamierView extends PlateauView {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 			if(mMode==RUNNING) {
 				if(mEtat==SELECT) {
-					if (mSelection.get(mSelection.size()-1).getX()<mNbCases-1){
-						mSelection.get(mSelection.size()-1).setX(mSelection.get(mSelection.size()-1).getX()+1);
+					if (mDeplacements.get(mDeplacements.size()-1).getX()<mNbCases-1){
+						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()+1);
 					}
 					update();
 					return(true);
