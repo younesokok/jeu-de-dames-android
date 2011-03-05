@@ -161,9 +161,12 @@ Log.i("Debug", "Fin d'update");
     	mDamesBlanc.clear();
     	
     	/* On initialise les listes de pions */
-    	mPionsNoir.add(new Coordonnees(8, 4));
-    	mPionsBlanc.add(new Coordonnees(1, 6));
-
+        for(int i=0;i<5;i++) {
+            for(int j=0;j<4;j++){
+            	mPionsNoir.add(new Coordonnees((2*i)+(1+j)%2,j));
+            	mPionsBlanc.add(new Coordonnees((2*i)+j%2,9-j));
+            }
+        }
         mScoreBlanc = 0;
         mScoreNoir = 0;
     }
