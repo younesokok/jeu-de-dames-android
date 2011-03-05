@@ -1,8 +1,8 @@
 package android.dames;
 
 public class Coordonnees {
-	public int x;
-	public int y;
+	private int x;
+	private int y;
 
 	public Coordonnees(int newX, int newY) {
 		x = newX;
@@ -14,6 +14,26 @@ public class Coordonnees {
 			return true;
 		}
 		return false;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setX(int newX) {
+		x = newX;
+	}
+
+	public void setY(int newY) {
+		y = newY;
+	}
+	
+	public String toString(){
+		return ("X : "+x+", Y : "+y);
 	}
 }
 
