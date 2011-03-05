@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -28,8 +29,9 @@ public class DamierView extends PlateauView {
 	private int mEtat = SELECT;
 	public static final int ATTENTE = 0;
 	public static final int SELECT = 1;
-	public static final int VALID = 2;
-	//	public static final int ... = 3;
+	public static final int PLAY = 2;
+	public static final int VALID = 3;
+	//	public static final int ... = 4;
 
 	/**
 	 * On definit les différents types de cases
@@ -187,7 +189,7 @@ public class DamierView extends PlateauView {
 			updatePionsNoir();
 			updatePionsBlanc();
 		}
-		if(mEtat==SELECT) {
+		if(mEtat==SELECT||mEtat==PLAY) {
 			updateDeplacements();
 		}
 		invalidate();
@@ -251,7 +253,8 @@ public class DamierView extends PlateauView {
 			}
 			// Si jamais on est dans le mode RUNNING
 			if(mMode==RUNNING) {
-				if(mEtat==SELECT) {
+				// Si on est sur la phase de selection du pion à jouer
+				if(mEtat==SELECT||mEtat==PLAY) {
 					if (mDeplacements.get(mDeplacements.size()-1).getY()>0){
 						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()-1);
 					}
@@ -263,7 +266,7 @@ public class DamierView extends PlateauView {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 			if(mMode==RUNNING) {
-				if(mEtat==SELECT) {
+				if(mEtat==SELECT||mEtat==PLAY) {
 					if (mDeplacements.get(mDeplacements.size()-1).getY()<mNbCases-1){
 						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()+1);
 					}
@@ -275,7 +278,7 @@ public class DamierView extends PlateauView {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			if(mMode==RUNNING) {
-				if(mEtat==SELECT) {
+				if(mEtat==SELECT||mEtat==PLAY) {
 					if (mDeplacements.get(mDeplacements.size()-1).getX()>0){
 						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()-1);
 					}
@@ -287,7 +290,7 @@ public class DamierView extends PlateauView {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 			if(mMode==RUNNING) {
-				if(mEtat==SELECT) {
+				if(mEtat==SELECT||mEtat==PLAY) {
 					if (mDeplacements.get(mDeplacements.size()-1).getX()<mNbCases-1){
 						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()+1);
 					}
@@ -299,14 +302,16 @@ public class DamierView extends PlateauView {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
 			if(mMode==RUNNING) {
+				/* Gestion de la selection du pion à jouer */
 				if(mEtat==SELECT) {
 					if(mCouleurJoeur==BLANC) {
 						int index = 0;
 						for (Pion p : mPionsBlanc) {
-							if(p.equals(mDeplacements.get(mDeplacements.size()-1))){
+							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
 								mDeplacements.remove(mDeplacements.size()-1);
 								mDeplacements.add(new Pion(p.getX(),p.getY()));
 								mDeplacements.add(new Pion(p.getX(),p.getY(),p.getType()));
+								mEtat=PLAY;
 							}
 							index++;
 						}	
@@ -314,7 +319,28 @@ public class DamierView extends PlateauView {
 					update();
 					return(true);
 				}
-			}
+				
+				/* Gestion des actions, une fois le pion choisi */
+				if(mEtat==PLAY) {
+					if(mCouleurJoeur==BLANC) {
+						/* Si on repose le pion, on peut en choisir un autre */
+						if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
+							mDeplacements.remove(mDeplacements.size()-1);
+							mEtat=SELECT;
+						}
+						/* Gérer les différents cas de déplacement ici...
+						else if(){
+							// on modifie les différentes listes de pion
+							 
+							// on regle un etat de sortie 
+							mEtat=...;
+						}
+						*/
+					}
+					update();
+					return(true);
+				}
+			}	
 		}
 
 		return super.onKeyDown(keyCode, msg);
@@ -364,7 +390,7 @@ public class DamierView extends PlateauView {
 			Pion c = cvec.get(index);
 			rawArray[3 * index] = c.getX();
 			rawArray[3 * index + 1] = c.getY();
-			rawArray[3 * index + 1] = c.getType();
+			rawArray[3 * index + 2] = c.getType();
 		}
 		return rawArray;
 	}
