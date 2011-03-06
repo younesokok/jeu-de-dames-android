@@ -43,6 +43,18 @@ public class Pion {
 		}
 		return false;
 	}
+	
+	public boolean equalsDiag(Pion aTester) {
+		int diffX = x-aTester.x;
+		if (diffX == y-aTester.y) {
+			return true;
+		}
+		return false;
+	}
+	
+	public int getDistance(Pion aTester) {
+		return (Math.abs(x-aTester.x));
+	}
 
 	public int getX() {
 		return x;

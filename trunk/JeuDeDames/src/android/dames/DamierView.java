@@ -319,7 +319,7 @@ public class DamierView extends PlateauView {
 					update();
 					return(true);
 				}
-				
+
 				/* Gestion des actions, une fois le pion choisi */
 				if(mEtat==PLAY) {
 					if(mCouleurJoeur==BLANC) {
@@ -328,14 +328,48 @@ public class DamierView extends PlateauView {
 							mDeplacements.remove(mDeplacements.size()-1);
 							mEtat=SELECT;
 						}
+						/* On vérifie déjà que le déplacement est diagonal */
+						else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
+							/* On gere le cas d'un déplacement de 1 en diagonal */
+							if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
+								int index = 0;
+								for (Pion p : mPionsBlanc) {
+									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+										update();
+										return(true);
+									}
+									index++;
+								}
+								index = 0;
+								for (Pion p : mPionsNoir) {
+									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+										update();
+										return(true);
+									}
+									index++;
+								}
+								mPionsBlanc.add(mDeplacements.get(mDeplacements.size()-1));
+								mDeplacements.remove(mDeplacements.size()-1);
+								index = 0;
+								for (Pion p : mPionsBlanc) {
+									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+										mPionsBlanc.remove(index);
+										break;
+									}
+									index++;
+								}
+								mDeplacements.remove(mDeplacements.size()-1);
+								mEtat=ATTENTE;	
+							}	
+						}
 						/* Gérer les différents cas de déplacement ici...
 						else if(){
 							// on modifie les différentes listes de pion
-							 
+
 							// on regle un etat de sortie 
 							mEtat=...;
 						}
-						*/
+						 */
 					}
 					update();
 					return(true);
