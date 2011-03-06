@@ -265,12 +265,13 @@ public class DamierView extends PlateauView {
 				// On enleve les pions/dames pris
 				/* On transforme les pions en dames */
 				Pion pCourant = mDeplacements.get(mDeplacements.size()-2);
-				if(pCourant.getType()==PION_BLANC&&pCourant.getX()==0) {
+				if(pCourant.getType()==PION_BLANC&&pCourant.getY()==0) {
 					index = 0;
 					for (Pion p : mPionsBlanc) {
 						if(p.equalsPosition(pCourant)) {
 							mPionsBlanc.remove(index);
-							mPionsBlanc.add(pCourant);
+							mPionsBlanc.add(new Pion(p.getX(),p.getY(),DAME_BLANC));
+							break;
 						}
 						index++;
 					}
@@ -366,7 +367,6 @@ public class DamierView extends PlateauView {
 		int index = 0;
 		for (Pion p : mPionsNoir) {
 			setCase(p.getType(), p.getX(), p.getY());
-			setCase(p.getType(), p.getX(), p.getY());
 			index++;
 		}
 	}
@@ -374,7 +374,6 @@ public class DamierView extends PlateauView {
 	private void updatePionsBlanc() {
 		int index = 0;
 		for (Pion p : mPionsBlanc) {
-			setCase(p.getType(), p.getX(), p.getY());
 			setCase(p.getType(), p.getX(), p.getY());
 			index++;
 		}
