@@ -49,7 +49,7 @@ public class JeuDeDamesActivity extends Activity {
 	}
 	
 	/**
-	 * Methode appelee lors d'une rotation ?!
+	 * Methode appelee lors d'une rotation ou d'un pause
 	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -70,10 +70,12 @@ public class JeuDeDamesActivity extends Activity {
     		mDamierView.setEtat(mDamierView.VALID);
     		mDamierView.updateGame();
     	}
+    	/*
     	if(item.getTitle()=="Simul retour attente") {
     		mDamierView.setEtat(mDamierView.SELECT);
     		mDamierView.updateGame();
     	}
+    	*/
     	return super.onOptionsItemSelected(item);
     }
 }
