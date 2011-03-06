@@ -1,5 +1,7 @@
 package android.dames;
 
+import android.util.Log;
+
 public class Pion {
 	private int x;
 	private int y;
@@ -45,8 +47,7 @@ public class Pion {
 	}
 	
 	public boolean equalsDiag(Pion aTester) {
-		int diffX = x-aTester.x;
-		if (diffX == y-aTester.y) {
+		if (Math.abs(x-aTester.x) == Math.abs(y-aTester.y)) {
 			return true;
 		}
 		return false;
