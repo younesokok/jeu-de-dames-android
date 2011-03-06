@@ -125,6 +125,99 @@ public class DamierView extends PlateauView {
 	}
 
 	/**
+	 * On gère les régles ici
+	 */
+	public boolean updateGame() {
+		switch(mMode) {
+		case(RUNNING):
+			switch(mEtat){
+			case(ATTENTE):
+				/* Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur */
+				break;
+			case(SELECT):
+				/* Gestion des règles lors de la selection d'un pion */
+
+			
+				if(mCouleurJoeur==BLANC) {
+					int index = 0;
+					for (Pion p : mPionsBlanc) {
+						if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+							mDeplacements.remove(mDeplacements.size()-1);
+							mDeplacements.add(new Pion(p.getX(),p.getY()));
+							mDeplacements.add(new Pion(p.getX(),p.getY(),p.getType()));
+							setEtat(PLAY);
+						}
+						index++;
+					}
+					updateView();
+					return(true);
+				}
+				break;	
+				
+			case(PLAY):
+				/* Gestion des règles lors du déplacement d'un pion */
+				if(mEtat==PLAY) {
+					if(mCouleurJoeur==BLANC) {
+						/* Si on repose le pion, on peut en choisir un autre */
+						if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
+							mDeplacements.remove(mDeplacements.size()-1);
+							setEtat(SELECT);
+						}
+						/* On vérifie déjà que le déplacement est diagonal */
+						else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
+							/* On gere le cas d'un déplacement de 1 en diagonal */
+							if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
+								int index = 0;
+								for (Pion p : mPionsBlanc) {
+									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+										updateView();
+										return(true);
+									}
+									index++;
+								}
+								index = 0;
+								for (Pion p : mPionsNoir) {
+									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+										updateView();
+										return(true);
+									}
+									index++;
+								}
+								mPionsBlanc.add(mDeplacements.get(mDeplacements.size()-1));
+								mDeplacements.remove(mDeplacements.size()-1);
+								index = 0;
+								for (Pion p : mPionsBlanc) {
+									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+										mPionsBlanc.remove(index);
+										break;
+									}
+									index++;
+								}
+								mDeplacements.remove(mDeplacements.size()-1);
+								//mEtat=ATTENTE;
+								// pour test
+								setEtat(SELECT);
+							}	
+						}
+					}
+					updateView();
+					return(true);
+				}
+				break;
+				case(VALID):
+					/* Gestion des règles une fois tous les déplacemnts terminés */
+					// On enleve les pions/dames pris
+					// On transforme les pions en dames
+					break;
+			} // Fin SWITCH(mEtat)
+			break; //Fin Case RUNNING
+		} // Fin SWITCH(mMode)
+		/* On arrive le résultat */
+		updateView();
+		return false;
+	}
+
+	/**
 	 * Methode de sauvegarde du damier lors d'une pause, rotation, etc.
 	 * @return bundle_damier
 	 */
@@ -183,13 +276,18 @@ public class DamierView extends PlateauView {
 	/**
 	 * Mets à jour les pions si necessaire.
 	 */
-	public void update() {
+	public void updateView() {
 		if (mMode == RUNNING) {
 			clearCases();
 			updatePionsNoir();
 			updatePionsBlanc();
 		}
 		if(mEtat==SELECT||mEtat==PLAY) {
+			/* pourquoi ça marche sans ça ? 
+			clearCases();
+			updatePionsNoir();
+			updatePionsBlanc();
+			 */
 			updateDeplacements();
 		}
 		invalidate();
@@ -214,6 +312,7 @@ public class DamierView extends PlateauView {
 	}
 
 	private void updateDeplacements() {
+		/** on ajoute un pointeur s'il y en a pas */
 		int index = 0;
 		for (Pion p : mDeplacements) {
 			if(p.getType()==PION_INDEFINI)
@@ -223,170 +322,13 @@ public class DamierView extends PlateauView {
 		}		
 	}
 
-
-
-	// ----------------------- Contrôleur -------------------- //
-
-	/**
-	 * Gestion des touches
-	 */
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent msg) {
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			if (mMode == READY | mMode == LOSE) {
-				/*
-				 * Au debut ou en fin de partie on relance le jeu
-				 */
-				initNewGame();
-				setMode(RUNNING);
-				update();
-				return (true);
-			}
-			if (mMode == PAUSE) {
-				/*
-				 * On continue apres la pause
-				 */
-				setMode(RUNNING);
-				update();
-				return (true);
-			}
-			// Si jamais on est dans le mode RUNNING
-			if(mMode==RUNNING) {
-				// Si on est sur la phase de selection du pion à jouer
-				if(mEtat==SELECT||mEtat==PLAY) {
-					if (mDeplacements.get(mDeplacements.size()-1).getY()>0){
-						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()-1);
-					}
-					update();
-					return(true);
-				}
-			}
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			if(mMode==RUNNING) {
-				if(mEtat==SELECT||mEtat==PLAY) {
-					if (mDeplacements.get(mDeplacements.size()-1).getY()<mNbCases-1){
-						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()+1);
-					}
-					update();
-					return(true);
-				}
-			}
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			if(mMode==RUNNING) {
-				if(mEtat==SELECT||mEtat==PLAY) {
-					if (mDeplacements.get(mDeplacements.size()-1).getX()>0){
-						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()-1);
-					}
-					update();
-					return(true);
-				}
-			}
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			if(mMode==RUNNING) {
-				if(mEtat==SELECT||mEtat==PLAY) {
-					if (mDeplacements.get(mDeplacements.size()-1).getX()<mNbCases-1){
-						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()+1);
-					}
-					update();
-					return(true);
-				}
-			}
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
-			if(mMode==RUNNING) {
-				/* Gestion de la selection du pion à jouer */
-				if(mEtat==SELECT) {
-					if(mCouleurJoeur==BLANC) {
-						int index = 0;
-						for (Pion p : mPionsBlanc) {
-							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-								mDeplacements.remove(mDeplacements.size()-1);
-								mDeplacements.add(new Pion(p.getX(),p.getY()));
-								mDeplacements.add(new Pion(p.getX(),p.getY(),p.getType()));
-								mEtat=PLAY;
-							}
-							index++;
-						}	
-					}
-					update();
-					return(true);
-				}
-
-				/* Gestion des actions, une fois le pion choisi */
-				if(mEtat==PLAY) {
-					if(mCouleurJoeur==BLANC) {
-						/* Si on repose le pion, on peut en choisir un autre */
-						if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
-							mDeplacements.remove(mDeplacements.size()-1);
-							mEtat=SELECT;
-						}
-						/* On vérifie déjà que le déplacement est diagonal */
-						else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
-							/* On gere le cas d'un déplacement de 1 en diagonal */
-							if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
-								int index = 0;
-								for (Pion p : mPionsBlanc) {
-									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-										update();
-										return(true);
-									}
-									index++;
-								}
-								index = 0;
-								for (Pion p : mPionsNoir) {
-									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-										update();
-										return(true);
-									}
-									index++;
-								}
-								mPionsBlanc.add(mDeplacements.get(mDeplacements.size()-1));
-								mDeplacements.remove(mDeplacements.size()-1);
-								index = 0;
-								for (Pion p : mPionsBlanc) {
-									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-										mPionsBlanc.remove(index);
-										break;
-									}
-									index++;
-								}
-								mDeplacements.remove(mDeplacements.size()-1);
-								mEtat=ATTENTE;	
-							}	
-						}
-						/* Gérer les différents cas de déplacement ici...
-						else if(){
-							// on modifie les différentes listes de pion
-
-							// on regle un etat de sortie 
-							mEtat=...;
-						}
-						 */
-					}
-					update();
-					return(true);
-				}
-			}	
-		}
-
-		return super.onKeyDown(keyCode, msg);
-	}
-
 	public void setMode(int newMode) {
 		int oldMode = mMode;
 		mMode = newMode;
 
 		if (newMode == RUNNING & oldMode != RUNNING) {
 			mStatusText.setVisibility(View.INVISIBLE);
-			update();
+			updateView();
 			return;
 		}
 
@@ -406,6 +348,102 @@ public class DamierView extends PlateauView {
 		mStatusText.setText(str);
 		mStatusText.setVisibility(View.VISIBLE);
 	}
+
+	public void setEtat(int newEtat){
+		/* Creation du pointeur de selection */
+		if(newEtat==SELECT) {
+			if(mDeplacements.size()==0) {
+				mDeplacements.add(new Pion(0, 9));
+
+			}	
+		}
+		mEtat=newEtat;
+	}
+	
+	// ----------------------- Contrôleur -------------------- //
+
+	/**
+	 * Gestion des touches
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent msg) {
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			if (mMode == READY | mMode == LOSE) {
+				/*
+				 * Au debut ou en fin de partie on relance le jeu
+				 */
+				initNewGame();
+				setMode(RUNNING);
+				updateView();
+				return (true);
+			}
+			if (mMode == PAUSE) {
+				/*
+				 * On continue apres la pause
+				 */
+				setMode(RUNNING);
+				updateView();
+				return (true);
+			}
+			// Si jamais on est dans le mode RUNNING
+			if(mMode==RUNNING) {
+				// Si on est sur la phase de selection du pion à jouer
+				if(mEtat==SELECT||mEtat==PLAY) {
+					if (mDeplacements.get(mDeplacements.size()-1).getY()>0){
+						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()-1);
+					}
+					updateView();
+					return(true);
+				}
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			if(mMode==RUNNING) {
+				if(mEtat==SELECT||mEtat==PLAY) {
+					if (mDeplacements.get(mDeplacements.size()-1).getY()<mNbCases-1){
+						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()+1);
+					}
+					updateView();
+					return(true);
+				}
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+			if(mMode==RUNNING) {
+				if(mEtat==SELECT||mEtat==PLAY) {
+					if (mDeplacements.get(mDeplacements.size()-1).getX()>0){
+						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()-1);
+					}
+					updateView();
+					return(true);
+				}
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+			if(mMode==RUNNING) {
+				if(mEtat==SELECT||mEtat==PLAY) {
+					if (mDeplacements.get(mDeplacements.size()-1).getX()<mNbCases-1){
+						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()+1);
+					}
+					updateView();
+					return(true);
+				}
+			}
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+			updateGame();
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, msg);
+	}
+
+
 
 	// ----------------------- Methodes annexes -------------------- //
 
