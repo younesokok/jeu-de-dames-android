@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.InputFilter.LengthFilter;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DamierView extends PlateauView {
 
@@ -27,10 +30,12 @@ public class DamierView extends PlateauView {
 	 * On definit l'etat du damier
 	 */
 	private int mEtat = SELECT;
-	public static final int ATTENTE = 0;
+	private int mEtatPrecedent = SELECT;
+	public static final int AFFICHE = 0;
 	public static final int SELECT = 1;
 	public static final int PLAY = 2;
 	public static final int VALID = 3;
+	public static final int ATTENTE = 4;
 	//	public static final int ... = 4;
 
 	/**
@@ -76,6 +81,7 @@ public class DamierView extends PlateauView {
 	 * Texte a afficher
 	 */
 	private TextView mStatusText;
+	private Toast toast;
 
 	/**
 	 * Constructeur
@@ -126,18 +132,33 @@ public class DamierView extends PlateauView {
 
 	/**
 	 * On gère les régles ici
+	 * @throws InterruptedException 
 	 */
-	public boolean updateGame() {
+	public boolean updateGame(){
 		switch(mMode) {
 		case(RUNNING):
 			switch(mEtat){
-			case(ATTENTE):
+			case(ATTENTE):{
 				/* Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur */
-				break;
-			case(SELECT):
-				/* Gestion des règles lors de la selection d'un pion */
+				toast = Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG);
+				toast.show();
+				// A supprimer apres avoir mis l'attente réelle
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//
+				toast = Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG);
+				toast.show();
+				setEtat(SELECT);
+				updateGame();
+				break;	
+			}
+			case(SELECT):{
 
-			
+				/* Gestion des règles lors de la selection d'un pion */			
 				if(mCouleurJoeur==BLANC) {
 					int index = 0;
 					for (Pion p : mPionsBlanc) {
@@ -153,64 +174,82 @@ public class DamierView extends PlateauView {
 					return(true);
 				}
 				break;	
-				
-			case(PLAY):
+			}
+
+			case(PLAY):{
+
 				/* Gestion des règles lors du déplacement d'un pion */
-				if(mEtat==PLAY) {
-					if(mCouleurJoeur==BLANC) {
-						/* Si on repose le pion, on peut en choisir un autre */
-						if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
+				if(mCouleurJoeur==BLANC) {
+					/* Si on repose le pion, on peut en choisir un autre */
+					if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
+						mDeplacements.remove(mDeplacements.size()-1);
+						setEtat(SELECT);
+					}
+					/* On vérifie déjà que le déplacement est diagonal */
+					else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
+						/* On gere le cas d'un déplacement de 1 en diagonal */
+						if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
+							int index = 0;
+							for (Pion p : mPionsBlanc) {
+								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+									updateView();
+									return(true);
+								}
+								index++;
+							}
+							index = 0;
+							for (Pion p : mPionsNoir) {
+								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+									updateView();
+									return(true);
+								}
+								index++;
+							}
+							mPionsBlanc.add(mDeplacements.get(mDeplacements.size()-1));
 							mDeplacements.remove(mDeplacements.size()-1);
-							setEtat(SELECT);
-						}
-						/* On vérifie déjà que le déplacement est diagonal */
-						else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
-							/* On gere le cas d'un déplacement de 1 en diagonal */
-							if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
-								int index = 0;
-								for (Pion p : mPionsBlanc) {
-									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-										updateView();
-										return(true);
-									}
-									index++;
+							index = 0;
+							for (Pion p : mPionsBlanc) {
+								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+									mPionsBlanc.remove(index);
+									break;
 								}
-								index = 0;
-								for (Pion p : mPionsNoir) {
-									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-										updateView();
-										return(true);
-									}
-									index++;
-								}
-								mPionsBlanc.add(mDeplacements.get(mDeplacements.size()-1));
-								mDeplacements.remove(mDeplacements.size()-1);
-								index = 0;
-								for (Pion p : mPionsBlanc) {
-									if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-										mPionsBlanc.remove(index);
-										break;
-									}
-									index++;
-								}
-								mDeplacements.remove(mDeplacements.size()-1);
-								//mEtat=ATTENTE;
-								// pour test
-								setEtat(SELECT);
-							}	
-						}
+								index++;
+							}
+							mDeplacements.remove(mDeplacements.size()-1);
+							//mEtat=ATTENTE;
+							// pour test
+							setEtat(VALID);
+						}	
 					}
 					updateView();
 					return(true);
 				}
 				break;
-				case(VALID):
-					/* Gestion des règles une fois tous les déplacemnts terminés */
-					// On enleve les pions/dames pris
-					// On transforme les pions en dames
-					break;
+			}
+			case(VALID):{
+
+				if(mDeplacements.size()<=1) {
+					toast = Toast.makeText(getContext(), "Vous devez au moins bouger un pion !", Toast.LENGTH_LONG);
+					toast.show();
+					setEtat(mEtatPrecedent);
+					return(true);
+				}	
+				if(mEtatPrecedent==PLAY) {
+					toast = Toast.makeText(getContext(), "Vous devez relacher votre pion !", Toast.LENGTH_LONG);
+					toast.show();
+					setEtat(mEtatPrecedent);
+					return(true);
+				}	
+				/* Gestion des règles une fois tous les déplacemnts terminés */
+				// On enleve les pions/dames pris
+				// On transforme les pions en dames
+				setEtat(ATTENTE);
+				updateGame();
+				return(true);
+				//break;
+			}
 			} // Fin SWITCH(mEtat)
-			break; //Fin Case RUNNING
+		break; //Fin Case RUNNING
 		} // Fin SWITCH(mMode)
 		/* On arrive le résultat */
 		updateView();
@@ -354,12 +393,13 @@ public class DamierView extends PlateauView {
 		if(newEtat==SELECT) {
 			if(mDeplacements.size()==0) {
 				mDeplacements.add(new Pion(0, 9));
-
 			}	
 		}
+		mEtatPrecedent=mEtat;
 		mEtat=newEtat;
+		Log.i("Debug","Etat : "+mEtat+" - old : "+mEtatPrecedent);
 	}
-	
+
 	// ----------------------- Contrôleur -------------------- //
 
 	/**
