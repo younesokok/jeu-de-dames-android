@@ -53,9 +53,7 @@ class Tour
 				$xml .= "\t".'</damesCreees>'."\n";
 			}
 		$xml .= '</tour>';
-		$fd = fopen($fichier, 'w+');
-		fwrite($fd, $xml);
-		fclose($fd);
+		$fd = file_put_contents($fichier, $xml);
 		return $xml;
 	}
 	
