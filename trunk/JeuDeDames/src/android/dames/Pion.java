@@ -67,6 +67,10 @@ public class Pion {
 	public int getNumeroCase() {
 		return y*PlateauView.mNbCasesCote+x;
 	}
+	public void setXYParNumeroCase(int numeroCase) {
+		y = numeroCase%PlateauView.mNbCasesCote;
+		x = numeroCase-y/PlateauView.mNbCasesCote;
+	}
 	
 
 	public int getX() {
