@@ -1,15 +1,16 @@
 package android.dames;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.InputFilter.LengthFilter;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +84,7 @@ public class DamierView extends PlateauView {
 	 */
 	private TextView mStatusText;
 	private Toast toast;
+	private final String tag = "DamierView : ";
 
 	/**
 	 * Constructeur
@@ -140,22 +142,48 @@ public class DamierView extends PlateauView {
 		case(RUNNING):
 			switch(mEtat){
 			case(ATTENTE):{
-				/* Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur */
-				toast = Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG);
-				toast.show();
-				// A supprimer apres avoir mis l'attente réelle
-				/*
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				// Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur
+				Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG).show();
+
+				// --- Récupération des informations du serveur
+				Tour tourCourantServeur = communicationServeur.getTourCourant(tourCourant);
+				Log.i(tag, "*** tourCourant ***");
+				Log.i(tag, tourCourant.toString());
+				int attente = 10000;
+				int compteurAttente = 0;
+				int nbAttenteMax = 1;
+				Log.i(tag, "*** tourCourant sur le serveur ***");
+				while (tourCourantServeur.getNumero() <= tourCourant.getNumero() && compteurAttente < nbAttenteMax) {
+					Log.i(tag, tourCourantServeur.toString());
+					// Attente de 2s
+					try {
+						Thread.sleep(attente);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					// Récupérations des informations du serveur
+					tourCourantServeur = communicationServeur.getTourCourant(tourCourant);
+					compteurAttente++;
 				}
-				*/
-				// ici en décode les déplacements de notre adversaires et on met à jour
+				// Maj du tour courant
+				tourCourant = tourCourantServeur;
+				
+				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
-				toast = Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG);
-				toast.show();
+				if (tourCourantServeur.getNumero() > tourCourant.getNumero()) {
+					// Maj des déplacements
+					for (Entry<Integer, Integer> deplacement : tourCourant.getDeplacementsPionJoue().entrySet()) {
+						
+					}
+					// Maj des pions mangés
+					// TODO
+					// Maj des dames
+					// TODO
+				}
+				
+				
+				// --- On rend la main au joueur
+				Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
 				setEtat(SELECT);
 				updateView();
 				break;	
@@ -262,21 +290,45 @@ public class DamierView extends PlateauView {
 					setEtat(mEtatPrecedent);
 					return(true);
 				}	
-				/* Gestion des règles une fois tous les déplacemnts terminés */
+				// --- Gestion des règles une fois tous les déplacemnts terminés
 				// On enleve les pions/dames pris
-				/* On transforme les pions en dames */
+				// On transforme les pions en dames
 				Pion pCourant = mDeplacements.get(mDeplacements.size()-2);
-				if(pCourant.getType()==PION_BLANC&&pCourant.getY()==0) {
+				List<Pion> pionsManges = new ArrayList<Pion>();
+				List<Pion> damesCreees = new ArrayList<Pion>();
+				if(pCourant.getType()==PION_BLANC && pCourant.getY()==0) {
 					index = 0;
 					for (Pion p : mPionsBlanc) {
 						if(p.equalsPosition(pCourant)) {
-							mPionsBlanc.remove(index);
-							mPionsBlanc.add(new Pion(p.getX(),p.getY(),DAME_BLANC));
+							mPionsBlanc.set(index, new Pion(p.getX(),p.getY(),DAME_BLANC));
+							damesCreees.add(mPionsBlanc.get(index));
 							break;
 						}
 						index++;
 					}
 				}
+				// --- Envoi au serveur
+				tourCourant.incrNumero();
+				tourCourant.preparerProchainTour();
+				// Ajout des déplacements du pion
+				// Note : DeplacementsPionJoue prend en paramètre : positionInitiale -> positionSuivante, ..., positionIntermediaire -> positionFinale 
+				int lastCase = -1;
+				for (Pion pion : mDeplacements) {
+					if (lastCase == -1) {
+						lastCase = pion.getNumeroCase();
+						continue;
+					}
+					tourCourant.getDeplacementsPionJoue().put(lastCase, pion.getNumeroCase());
+					lastCase = pion.getNumeroCase();
+				}
+				for (Pion pion : pionsManges) {
+					tourCourant.getPionsManges().add(pion.getNumeroCase());
+				}
+				for (Pion pion : damesCreees) {
+					tourCourant.getDamesCreees().add(pion.getNumeroCase());
+				}
+				communicationServeur.sendTourFini(tourCourant);
+				// --- Remise en attente
 				setEtat(ATTENTE);
 				updateGame();
 				return(true);
@@ -474,7 +526,7 @@ public class DamierView extends PlateauView {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 			if(mMode==RUNNING) {
 				if(mEtat==SELECT||mEtat==PLAY) {
-					if (mDeplacements.get(mDeplacements.size()-1).getY()<mNbCases-1){
+					if (mDeplacements.get(mDeplacements.size()-1).getY()<mNbCasesCote-1){
 						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()+1);
 					}
 					updateView();
@@ -498,7 +550,7 @@ public class DamierView extends PlateauView {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 			if(mMode==RUNNING) {
 				if(mEtat==SELECT||mEtat==PLAY) {
-					if (mDeplacements.get(mDeplacements.size()-1).getX()<mNbCases-1){
+					if (mDeplacements.get(mDeplacements.size()-1).getX()<mNbCasesCote-1){
 						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()+1);
 					}
 					updateView();
