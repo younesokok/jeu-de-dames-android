@@ -40,7 +40,15 @@ public class TourSAXParser extends DefaultHandler {
 		}
 		else {
 			buffer = new StringBuffer();
-			if(qName.equals("deplacement")){
+			if(qName.equals("joueur")){
+				try {
+					String pseudo = attributs.getValue("pseudo");
+					tour.getJoueurs().add(pseudo);
+				} catch(Exception e){
+					throw new SAXException(e);
+				}
+			}
+			else if(qName.equals("deplacement")){
 				try {
 					int positionIn = Integer.parseInt(attributs.getValue("positionIn"));
 					int positionOut = Integer.parseInt(attributs.getValue("positionOut"));
