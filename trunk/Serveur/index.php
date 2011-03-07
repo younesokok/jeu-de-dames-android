@@ -10,7 +10,8 @@ if (isset($_GET['sens']) && NULL != $_GET['sens'] && '' != $_GET['sens']) {
 				$tour->rejoindrePartie();
 			}
 			else if ('getTourCourant' == $_GET['action']) {
-				$tour = new Tour(array('idPartie' => 1, 'numero' => 3, 'joueurs' => 'Thomas:BN', 'deplacementsPionJoue' => '1:4;4:2', 'pionsManges' => '3:5', 'damesCreees' => ''));
+				$tour = new Tour(array('idPartie' => $_GET['idPartie'], 'numero' => $_GET['numero']));
+				$tour->getPartie();
 			}
 			header("Content-Type: text/xml" );
 			echo $tour->getXML();
@@ -18,7 +19,7 @@ if (isset($_GET['sens']) && NULL != $_GET['sens'] && '' != $_GET['sens']) {
 	}
 	else if ('send' == $_GET['sens']) {
 		if (isset($_GET['action']) && NULL != $_GET['action']) {
-			if ('sendPartieFinie' == $_GET['action']) {
+			if ('sendTourFini' == $_GET['action']) {
 				$tour = new Tour($_GET);
 			}
 			header("Content-Type: text/xml" );

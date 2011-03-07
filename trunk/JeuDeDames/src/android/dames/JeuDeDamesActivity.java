@@ -2,6 +2,7 @@ package android.dames;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ public class JeuDeDamesActivity extends Activity {
 
 	private DamierView mDamierView;
 	private static String mBundleKey = "damier-view";
+	private final String tag = "JeuDeDamesActivity : ";
 
 	/**
 	 * Methode appelee lors du lancement de l'application, 
@@ -18,27 +20,32 @@ public class JeuDeDamesActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
         setContentView(R.layout.damier_layout);
 
         mDamierView = (DamierView) findViewById(R.id.damier);
         mDamierView.setTextView((TextView) findViewById(R.id.text));
       
-        if (savedInstanceState != null) {
-        	// On vient juste de lancer le jeu
-            Bundle bundle_tourCourant = savedInstanceState.getBundle("tourCourant");
-            if (bundle_tourCourant != null) {
-            	mDamierView.setTourCourant(bundle_tourCourant);
-            	mDamierView.setMode(DamierView.READY);
-            }
-            // On restaure le jeu
-            else {
-	            Bundle bundle_damier = savedInstanceState.getBundle(mBundleKey);
-	            if (bundle_damier != null) {
-	            	mDamierView.restoreState(bundle_damier);
-	            } else {
-	            	mDamierView.setMode(DamierView.PAUSE);
-	            }
+        // On vient juste de lancer le jeu
+        if (savedInstanceState == null) {
+        	Bundle bundleTourCourant = this.getIntent().getExtras();
+        	if (bundleTourCourant != null) {
+        		Log.i(tag, "Quelque chose dans le bundleExtra");
+        		mDamierView.setTourCourant((Tour) bundleTourCourant.getSerializable("tourCourant"));
+        	}
+        	if (mDamierView.getTourCourant() == null) {
+        		Log.i(tag, "Pas de tourCourant !");
+        	}
+        	mDamierView.setMode(DamierView.READY);
+        }
+     // On restaure le jeu
+        else {
+        	Log.i(tag, "Quelque chose dans le savedInstanceState");
+            Bundle bundle_damier = savedInstanceState.getBundle(mBundleKey);
+            if (bundle_damier != null) {
+            	Log.i(tag, "Reprise du jeu");
+            	mDamierView.restoreState(bundle_damier);
+            } else {
+            	mDamierView.setMode(DamierView.PAUSE);
             }
         }
 	}

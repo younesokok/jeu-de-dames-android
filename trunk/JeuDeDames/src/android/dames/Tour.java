@@ -62,12 +62,19 @@ public class Tour implements Serializable {
 		return sb.toString();
 	}
 	
+	public void preparerProchainTour() {
+		incrNumero();
+		razDeplacementsPionJoue();
+		razPionsManges();
+		razDamesCreees();
+	}
 	public void setIdPartie(int idPartie) { this.idPartie = idPartie; }
 	public int getIdPartie() { return idPartie; }
 	public void setNumero(int numero) { this.numero = numero; }
 	public void incrNumero() { this.numero++; }
 	public int getNumero() { return numero; }
 	public void setDeplacementsPionJoue(Map<Integer, Integer> deplacementsPionJoue) { this.deplacementsPionJoue = deplacementsPionJoue; }
+	public void razDeplacementsPionJoue() { deplacementsPionJoue.clear(); }
 	public Map<Integer, Integer> getDeplacementsPionJoue() { return deplacementsPionJoue; }
 	public String getStringDeplacementsPionJoue() {
 		StringBuffer sb = new StringBuffer();
@@ -80,6 +87,7 @@ public class Tour implements Serializable {
 		return sb.toString();
 	}
 	public void setPionsManges(List<Integer> pionsManges) { this.pionsManges = pionsManges; }
+	public void razPionsManges() { pionsManges.clear(); }
 	public List<Integer> getPionsManges() { return pionsManges; }
 	public String getStringPionsManges() {
 		StringBuffer sb = new StringBuffer();
@@ -92,6 +100,7 @@ public class Tour implements Serializable {
 		return sb.toString();
 	}
 	public void setDamesCreees(List<Integer> damesCreees) { this.damesCreees = damesCreees; }
+	public void razDamesCreees() { damesCreees.clear(); }
 	public List<Integer> getDamesCreees() { return damesCreees; }
 	public String getStringDamesCreees() {
 		StringBuffer sb = new StringBuffer();
@@ -103,12 +112,9 @@ public class Tour implements Serializable {
 		}
 		return sb.toString();
 	}
-	public void setJoueurs(List<String> joueurs) {
-		this.joueurs = joueurs;
-	}
-	public List<String> getJoueurs() {
-		return joueurs;
-	}
+	public void setJoueurs(List<String> joueurs) { this.joueurs = joueurs; }
+	public void razJoueurs() { joueurs.clear(); }
+	public List<String> getJoueurs() { return joueurs; }
 	public String getStringJoueurs() {
 		StringBuffer sb = new StringBuffer();
 		if (null != joueurs && joueurs.size() > 0) {

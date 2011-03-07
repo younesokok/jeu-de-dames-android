@@ -70,7 +70,7 @@ class Tour
 	{
 		$pseudoAAjouter = $this->joueurs[0];
 		// --- Parcours des fichiers (d'aujourd'hui) pour trouver une partie disponible
-		$pattern = 'XML/'.date('Y-m-d', time()).'-partie-*-tour-*.xml';
+		$pattern = 'XML/'.date('Y-m-d', time()).'-partie-*-tour-0.xml';
 		$fichiers = glob($pattern, GLOB_BRACE);
 		$dom = new DomDocument();
 		$trouve = false;
@@ -86,13 +86,14 @@ class Tour
 				// --- Récupération de la partie
 				$this->idPartie = preg_replace('!^.*partie-(\d+)-.*$!', '$1', $fichier);
 				$this->numero = 0;
-				$this->joueurs[1] = $joueurs->item(0)->getAttribute('pseudo');
+				if ($joueurs->length == 1) {
+					$this->joueurs[1] = $joueurs->item(0)->getAttribute('pseudo');
+				}
 				// --- Maj du fichier XML
 				// Creation nouvelle balise
 				$nouveauJoueur = $dom->createElement('joueur');
 				$nouveauJoueur->setAttribute('pseudo', $pseudoAAjouter);
 				// Insertion de la nouvelle balise
-				
 				$listeJoueurs->appendChild($nouveauJoueur);
 				// Enregistrement de l'xml
 				$nouveauXml = $dom->saveXML();
@@ -111,6 +112,16 @@ class Tour
 			// Création de l'xml
 			$this->getXML();
 		}
+	}
+	
+	public function getPartie()
+	{
+		// Si le tour suivant existe : on incrémente numéro, ce qui nous permettra de renvoyer ce tour, qui est le tour courant
+		$fichier = 'XML/'.date('Y-m-d', time()).'-partie-'.$this->idPartie.'-tour-'.($this->numero+1).'.xml';
+		if (is_file($fichier)) {
+			$this->numero = $this->numero+1;
+		}
+		// Sinon, on incrémente par numéro, donc on renverra le tour courant
 	}
 	
 	public static function getListeIntUrl($listeUrl)

@@ -53,11 +53,14 @@ public class CommucationServeur implements CommucationServeurInterface {
 	}
 	
 	@Override
-	public Tour getTourCourant() {
+	public Tour getTourCourant(Tour tour) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "receive");
 		params.put("action", "getTourCourant");
+		params.put("idPartie", String.valueOf(tour.getIdPartie()));
+		params.put("numero", String.valueOf(tour.getNumero()));
 		URL url = buildUrl(this.url, params);
+		Log.i(tag, url.toString());
 		Tour tourCourant = parserXmlTour(url);
 		Log.i(tag, tourCourant.toString());
 		return tourCourant;
@@ -70,6 +73,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 		params.put("action", "sendTourFini");
 		params.put("idPartie", String.valueOf(tour.getIdPartie()));
 		params.put("numero", String.valueOf(tour.getNumero()));
+		params.put("joueurs", tour.getStringJoueurs());
 		params.put("deplacementsPionJoue", tour.getStringDeplacementsPionJoue());
 		params.put("pionsManges", tour.getStringPionsManges());
 		params.put("damesCreees", tour.getStringDamesCreees());

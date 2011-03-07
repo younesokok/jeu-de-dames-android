@@ -1,6 +1,7 @@
 package android.dames;
 
 import android.content.Context;
+import android.dames.webservices.CommucationServeur;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,24 +15,31 @@ public class PlateauView extends View {
 
 	/* Parametres des cases */
 	private int mTailleCase = 30;
-	protected static int mNbCases = 10;
+	public static int mNbCasesCote = 10;
+	public static int mNbTotalCases = mNbCasesCote*mNbCasesCote;
 	private static int mMarge = 0;
 	/* Offset du début de damier */
 	private static int mXOffset;
 	private static int mYOffset;
 	/* Tableau de cases */
-	private int[][] mTableauCases = new int[10][10]; 
+	private int[][] mTableauCases = new int[mNbCasesCote][mNbCasesCote]; 
 	/* Tableau contenant les representations des différentes types de cases */
 	private Bitmap[] mTypeCases; 
 
 	private final Paint mPaint = new Paint();
+	
+	// --- Paramètres serveur
+	private String url = "http://www.jeudedames.la-bnbox.fr/index.php";
+	protected CommucationServeur communicationServeur;
 
 	public PlateauView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		communicationServeur = new CommucationServeur(url);
 	}
 
 	public PlateauView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		communicationServeur = new CommucationServeur(url);
 	}
 
 	/**
@@ -59,8 +67,8 @@ public class PlateauView extends View {
 	protected void onDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
-		for (int x = 0; x < mNbCases; x += 1) {
-			for (int y = 0; y < mNbCases; y += 1) {
+		for (int x = 0; x < mNbCasesCote; x += 1) {
+			for (int y = 0; y < mNbCasesCote; y += 1) {
 				if (mTableauCases[x][y] > 0) {
 					canvas.drawBitmap(mTypeCases[mTableauCases[x][y]], 
 							mXOffset + x * mTailleCase,
@@ -77,17 +85,17 @@ public class PlateauView extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		int cote = Math.min(w, h);
-		mTailleCase = (int) Math.floor((cote-mMarge) / mNbCases);
+		mTailleCase = (int) Math.floor((cote-mMarge) / mNbCasesCote);
 
-		mXOffset = ((w - (mTailleCase * mNbCases)) / 2);
-		mYOffset = ((h - (mTailleCase * mNbCases)) / 2);
+		mXOffset = ((w - (mTailleCase * mNbCasesCote)) / 2);
+		mYOffset = ((h - (mTailleCase * mNbCasesCote)) / 2);
 
 		clearCases();
 	}
 
 	public void clearCases() {
-		for (int x = 0; x < mNbCases; x++) {
-			for (int y = 0; y < mNbCases; y++) {
+		for (int x = 0; x < mNbCasesCote; x++) {
+			for (int y = 0; y < mNbCasesCote; y++) {
 				setCase(((x+y)%2)+1, x, y);
 			}
 		}

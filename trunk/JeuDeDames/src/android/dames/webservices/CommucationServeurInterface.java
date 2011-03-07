@@ -21,9 +21,10 @@ public interface CommucationServeurInterface {
 	public Tour rejoindrePartie(String pseudo);
 	/**
 	 * Retourne le tour en cours à partir du serveur
+	 * @param Tour tour Tour contenant l'id de la partie en cours
 	 * @return tour courant
 	 */
-	public Tour getTourCourant();
+	public Tour getTourCourant(Tour tour);
 	/**
 	 * Envoi un nouveau tour terminé au serveur
 	 * @param tour Tour terminé

@@ -39,6 +39,13 @@ public class Pion {
 		return false;
 	}
 	
+	public boolean equalsPosition(int numeroCaseATester) {
+		if (numeroCaseATester == getNumeroCase()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean equals(Pion aTester) {
 		if (x == aTester.x && y == aTester.y && type == aTester.type) {
 			return true;
@@ -56,6 +63,11 @@ public class Pion {
 	public int getDistance(Pion aTester) {
 		return (Math.abs(x-aTester.x));
 	}
+	
+	public int getNumeroCase() {
+		return y*PlateauView.mNbCasesCote+x;
+	}
+	
 
 	public int getX() {
 		return x;
