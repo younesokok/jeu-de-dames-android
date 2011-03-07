@@ -44,7 +44,7 @@ public class JeuDeDames extends Activity {
 				 * Recherche d'une partie disponible ou création d'une partie
 				 */
 				EditText champsPseudo = (EditText) findViewById(R.id.btnPseudo);
-				String pseudo = champsPseudo.getText().toString();
+				String pseudo = champsPseudo.getText().toString().replace(" ", "-");
 		    	Log.i(tag, "Pseudo : "+pseudo);
 		    	if (null == communivationServeur) {
 		    		Log.i(tag, "pas de serveur !");
