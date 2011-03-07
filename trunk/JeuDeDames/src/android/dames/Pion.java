@@ -64,9 +64,18 @@ public class Pion {
 		return (Math.abs(x-aTester.x));
 	}
 	
+	/**
+	 * Calcul le numéro de la case où se situe le pion à partir de ses coordonnées
+	 * @return Numéro de la case
+	 */
 	public int getNumeroCase() {
 		return y*PlateauView.mNbCasesCote+x;
 	}
+	
+	/**
+	 * Calcul (et maj) les coordonnées du pion case à partir de son numéro de case
+	 * @param numeroCase Numéro de la case sur lequel est situé le pion
+	 */
 	public void setXYParNumeroCase(int numeroCase) {
 		y = numeroCase%PlateauView.mNbCasesCote;
 		x = numeroCase-y/PlateauView.mNbCasesCote;

@@ -348,23 +348,27 @@ public class DamierView extends PlateauView {
 					setEtat(mEtatPrecedent);
 					return(true);
 				}	
+				
 				// --- Gestion des règles une fois tous les déplacemnts terminés
-				// On enleve les pions/dames pris
-				// On transforme les pions en dames
-				Pion pCourant = mDeplacements.get(mDeplacements.size()-2);
 				List<Pion> pionsManges = new ArrayList<Pion>();
 				List<Pion> damesCreees = new ArrayList<Pion>();
+				// On enleve les pions/dames pris
+				// TODO
+				// On transforme les pions en dames
+				Pion pCourant = mDeplacements.get(mDeplacements.size()-2);
 				if(pCourant.getType()==PION_BLANC && pCourant.getY()==0) {
 					index = 0;
 					for (Pion p : mPionsBlanc) {
 						if(p.equalsPosition(pCourant)) {
-							mPionsBlanc.set(index, new Pion(p.getX(),p.getY(),DAME_BLANC));
-							damesCreees.add(mPionsBlanc.get(index));
+							Pion nouvelleDame = new Pion(p.getX(),p.getY(),DAME_BLANC);
+							mPionsBlanc.set(index, nouvelleDame);
+							damesCreees.add(nouvelleDame);
 							break;
 						}
 						index++;
 					}
 				}
+				
 				// --- Envoi au serveur
 				tourCourant.incrNumero();
 				tourCourant.preparerProchainTour();
