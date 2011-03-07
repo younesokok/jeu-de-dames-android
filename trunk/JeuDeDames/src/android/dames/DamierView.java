@@ -76,7 +76,8 @@ public class DamierView extends PlateauView {
 	private static final int BLANC = 0;
 	private static final int NOIR = 1;
 	private static final int OBSERVATEUR = 2;
-
+	private Tour tourCourant;
+	
 	/**
 	 * Texte a afficher
 	 */
@@ -301,6 +302,7 @@ public class DamierView extends PlateauView {
 		bundle_damier.putIntArray("mSelection", pionArrayListToArray(mDeplacements));
 		bundle_damier.putInt("mScoreNoir", mScoreNoir);
 		bundle_damier.putInt("mScoreBlanc", mScoreBlanc);
+		bundle_damier.putSerializable("tourCourant", tourCourant);
 
 		return bundle_damier;
 	}
@@ -317,6 +319,7 @@ public class DamierView extends PlateauView {
 		mDeplacements = pionArrayToArrayList(bundle_damier.getIntArray("mSelection"));
 		mScoreNoir = bundle_damier.getInt("mScoreNoir");
 		mScoreBlanc = bundle_damier.getInt("mScoreBlanc");
+		tourCourant = (Tour) bundle_damier.getSerializable("tourCourant");
 	}
 
 	// ----------------------- Vue -------------------- //
@@ -552,6 +555,16 @@ public class DamierView extends PlateauView {
 			pionArrayList.add(c);
 		}
 		return pionArrayList;
+	}
+
+	public void setTourCourant(Tour tourCourant) {
+		this.tourCourant = tourCourant;
+	}
+	public void setTourCourant(Bundle bundle_tourCourant) {
+		this.tourCourant = (Tour) bundle_tourCourant.getSerializable("tourCourant");
+	}
+	public Tour getTourCourant() {
+		return tourCourant;
 	}
 
 

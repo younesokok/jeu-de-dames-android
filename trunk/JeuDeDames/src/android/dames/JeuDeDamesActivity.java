@@ -24,16 +24,21 @@ public class JeuDeDamesActivity extends Activity {
         mDamierView = (DamierView) findViewById(R.id.damier);
         mDamierView.setTextView((TextView) findViewById(R.id.text));
       
-        if (savedInstanceState == null) {
-            // We were just launched -- set up a new game
-        	mDamierView.setMode(DamierView.READY);
-        } else {
-            // We are being restored
-            Bundle bundle_damier = savedInstanceState.getBundle(mBundleKey);
-            if (bundle_damier != null) {
-            	mDamierView.restoreState(bundle_damier);
-            } else {
-            	mDamierView.setMode(DamierView.PAUSE);
+        if (savedInstanceState != null) {
+        	// On vient juste de lancer le jeu
+            Bundle bundle_tourCourant = savedInstanceState.getBundle("tourCourant");
+            if (bundle_tourCourant != null) {
+            	mDamierView.setTourCourant(bundle_tourCourant);
+            	mDamierView.setMode(DamierView.READY);
+            }
+            // On restaure le jeu
+            else {
+	            Bundle bundle_damier = savedInstanceState.getBundle(mBundleKey);
+	            if (bundle_damier != null) {
+	            	mDamierView.restoreState(bundle_damier);
+	            } else {
+	            	mDamierView.setMode(DamierView.PAUSE);
+	            }
             }
         }
 	}
