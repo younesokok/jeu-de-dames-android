@@ -1,28 +1,32 @@
 package android.dames;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Tour {
+public class Tour implements Serializable {
 	/* --- Attributs --- */
 	private int idPartie;
 	private int numero;
+	private List<String> joueurs;
 	private Map<Integer, Integer> deplacementsPionJoue;
 	private List<Integer> pionsManges;
 	private List<Integer> damesCreees;
 	
 	/* --- Constructeurs --- */
 	public Tour() {
+		joueurs = new ArrayList<String>();
 		deplacementsPionJoue = new HashMap<Integer, Integer>();
 		pionsManges = new ArrayList<Integer>();
 		damesCreees = new ArrayList<Integer>();
 	}
-	public Tour(int idPartie, int numero, Map<Integer, Integer> deplacementsPionJoue, List<Integer> pionsManges, List<Integer> damesCreees) {
+	public Tour(int idPartie, int numero, List<String> joueurs, Map<Integer, Integer> deplacementsPionJoue, List<Integer> pionsManges, List<Integer> damesCreees) {
 		this.idPartie = idPartie;
 		this.numero = numero;
+		this.joueurs = joueurs;
 		this.deplacementsPionJoue = deplacementsPionJoue;
 		this.pionsManges = pionsManges;
 		this.damesCreees = damesCreees;
@@ -33,6 +37,13 @@ public class Tour {
 	/* --- Getter, setter --- */
 	public String toString() {
 		StringBuffer sb = new StringBuffer("Tour "+numero+" de la partie "+idPartie+" : \n");
+		sb.append("Joueurs : \n");
+		int i = 1;
+		for (String joueur : joueurs) {
+			sb.append("Joueur "+i+" : "+joueur+"\n");
+			i++;
+		}
+		sb.append(getStringJoueurs()+"\n");
 		sb.append("Déplacements du pion joué : \n");
 		for (Entry<Integer, Integer> deplacement : deplacementsPionJoue.entrySet()) {
 			sb.append("de la case "+deplacement.getKey()+" à la case "+deplacement.getValue()+"\n");
@@ -86,6 +97,22 @@ public class Tour {
 		StringBuffer sb = new StringBuffer();
 		if (null != damesCreees && damesCreees.size() > 0) {
 			for (Integer dame : damesCreees) {
+				sb.append(dame+";");
+			}
+			sb.deleteCharAt(sb.length()-1);
+		}
+		return sb.toString();
+	}
+	public void setJoueurs(List<String> joueurs) {
+		this.joueurs = joueurs;
+	}
+	public List<String> getJoueurs() {
+		return joueurs;
+	}
+	public String getStringJoueurs() {
+		StringBuffer sb = new StringBuffer();
+		if (null != joueurs && joueurs.size() > 0) {
+			for (String dame : joueurs) {
 				sb.append(dame+";");
 			}
 			sb.deleteCharAt(sb.length()-1);

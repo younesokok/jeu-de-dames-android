@@ -4,6 +4,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<Button android:id="@+id/btnSearch" android:text="@string/btnSearch" android:layout_width="match_parent" android:layout_height="60px"></Button>
-<Button android:id="@+id/btnDamier" android:text="@string/btnDamier" android:layout_width="match_parent" android:layout_height="60px"></Button>
+    <ImageView android:layout_height="wrap_content" android:id="@+id/imgDamier" android:layout_width="match_parent" android:src="@drawable/damier" android:layout_marginTop="10px" android:layout_marginBottom="10px"></ImageView>
+    <TextView android:layout_width="wrap_content" android:text="@string/txtPseudo" android:id="@+id/textView1" android:layout_height="wrap_content"></TextView>
+    <EditText android:layout_width="match_parent" android:text="@string/btnTxtPseudo" android:layout_height="50px" android:id="@+id/btnPseudo"></EditText>
+<Button android:id="@+id/btnDamier" android:text="@string/btnDamier" android:layout_width="match_parent" android:layout_height="60px" android:textSize="20px"></Button>
 </LinearLayout>

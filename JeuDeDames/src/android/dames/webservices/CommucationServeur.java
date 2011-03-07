@@ -40,9 +40,23 @@ public class CommucationServeur implements CommucationServeurInterface {
 
 	/* --- Méthodes --- */
 	@Override
+	public Tour rejoindrePartie(String pseudo) {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("sens", "receive");
+		params.put("action", "rejoindrePartie");
+		params.put("pseudo", pseudo);
+		URL url = buildUrl(this.url, params);
+		Log.i(tag, url.toString());
+		Tour tourCourant = parserXmlTour(url);
+		Log.i(tag, tourCourant.toString());
+		return tourCourant;
+	}
+	
+	@Override
 	public Tour getTourCourant() {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "receive");
+		params.put("action", "getTourCourant");
 		URL url = buildUrl(this.url, params);
 		Tour tourCourant = parserXmlTour(url);
 		Log.i(tag, tourCourant.toString());
@@ -53,6 +67,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 	public Tour sendTourFini(Tour tour) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "send");
+		params.put("action", "sendTourFini");
 		params.put("idPartie", String.valueOf(tour.getIdPartie()));
 		params.put("numero", String.valueOf(tour.getNumero()));
 		params.put("deplacementsPionJoue", tour.getStringDeplacementsPionJoue());
@@ -117,11 +132,14 @@ public class CommucationServeur implements CommucationServeurInterface {
 		InputSource in = new InputSource();            
 		try {
 			// Récupération du contenu de l'URL
+//			Log.i("test", url.toString());
+//			url.openStream();
+//			Log.i("test", url.toString());
 			in.setByteStream(url.openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		in.setEncoding("ISO-8859-1"); // Changement du charset
+		in.setEncoding("UTF-8"); // Changement du charset
 		try {
 			xr.parse(in); // Parsing
 		} catch (IOException e) {

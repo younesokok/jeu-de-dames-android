@@ -14,6 +14,12 @@ public interface CommucationServeurInterface {
 	 */
 	public URL buildUrl(String url, Map<String, String> params);
 	/**
+	 * Recherche une partie disponible ou en créé une
+	 * @param String pseudo Pseudonyme choisi pour la partie
+	 * @return Tour courant
+	 */
+	public Tour rejoindrePartie(String pseudo);
+	/**
 	 * Retourne le tour en cours à partir du serveur
 	 * @return tour courant
 	 */
