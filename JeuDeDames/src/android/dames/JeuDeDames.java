@@ -59,8 +59,8 @@ public class JeuDeDames extends Activity {
 				 */
 				Intent intent = new Intent(JeuDeDames.this, JeuDeDamesActivity.class);
 				Bundle bundle = new Bundle();
-				/* On met ce que l'on veut dans le bundle */
-				bundle.putSerializable("tour", tourCourant);
+				// On met ce que l'on veut dans le bundle
+				bundle.putSerializable("tourCourant", tourCourant);
 				intent.putExtras(bundle);
 				startActivity(intent);
 			}
