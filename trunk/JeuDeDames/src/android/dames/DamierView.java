@@ -1,6 +1,7 @@
 package android.dames;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -126,7 +127,7 @@ public class DamierView extends PlateauView {
 		mCouleurJoueur = BLANC;
 
 		/* Liste des déplacements courants */
-		mDeplacements.add(new Pion(0, 9));
+		mDeplacements.add(new Pion(0, (PlateauView.mNbCasesCote-1)));
 	}
 
 	public void setTextView(TextView newTextView) {
@@ -149,13 +150,13 @@ public class DamierView extends PlateauView {
 				Tour tourCourantServeur = communicationServeur.getTourCourant(tourCourant);
 				Log.i(tag, "*** tourCourant ***");
 				Log.i(tag, tourCourant.toString());
-				int attente = 10000;
+				int attente = 5*1000; // 3s
 				int compteurAttente = 0;
 				int nbAttenteMax = 1;
 				Log.i(tag, "*** tourCourant sur le serveur ***");
 				while (tourCourantServeur.getNumero() <= tourCourant.getNumero() && compteurAttente < nbAttenteMax) {
 					Log.i(tag, tourCourantServeur.toString());
-					// Attente de 2s
+					// Attente de attente secondes
 					try {
 						Thread.sleep(attente);
 					} catch (InterruptedException e) {
@@ -170,6 +171,7 @@ public class DamierView extends PlateauView {
 				
 				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
+				// Si on a besoin de modifier
 				if (tourCourantServeur.getNumero() > tourCourant.getNumero()) {
 					// Maj des déplacements
 					for (Entry<Integer, Integer> deplacement : tourCourant.getDeplacementsPionJoue().entrySet()) {
@@ -349,11 +351,25 @@ public class DamierView extends PlateauView {
 					return(true);
 				}	
 				
-				// --- Gestion des règles une fois tous les déplacemnts terminés
+				// --- Gestion des règles une fois tous les déplacements terminés
 				List<Pion> pionsManges = new ArrayList<Pion>();
-				List<Pion> damesCreees = new ArrayList<Pion>();
+//				List<Pion> damesCreees = new ArrayList<Pion>();
 				// On enleve les pions/dames pris
 				// TODO
+//				Pion lastPion = null;
+//				for (Pion pion : mDeplacements) {
+//					if (lastPion == null) {
+//						lastPion = pion;
+//						continue;
+//					}
+//					if (mCouleurJoueur == BLANC) {
+//						for (Iterator<Pion> it = mPionsNoir.iterator(); it.hasNext();) {
+//							Pion pionNoir = it.next();
+//							
+//						}
+//					}
+//					lastPion = pion;
+//				}
 				// On transforme les pions en dames
 				Pion pCourant = mDeplacements.get(mDeplacements.size()-2);
 				if(pCourant.getType()==PION_BLANC && pCourant.getY()==0) {
@@ -362,7 +378,8 @@ public class DamierView extends PlateauView {
 						if(p.equalsPosition(pCourant)) {
 							Pion nouvelleDame = new Pion(p.getX(),p.getY(),DAME_BLANC);
 							mPionsBlanc.set(index, nouvelleDame);
-							damesCreees.add(nouvelleDame);
+//							damesCreees.add(nouvelleDame);
+							tourCourant.getDamesCreees().add(nouvelleDame.getNumeroCase());
 							break;
 						}
 						index++;
@@ -386,10 +403,11 @@ public class DamierView extends PlateauView {
 				for (Pion pion : pionsManges) {
 					tourCourant.getPionsManges().add(pion.getNumeroCase());
 				}
-				for (Pion pion : damesCreees) {
-					tourCourant.getDamesCreees().add(pion.getNumeroCase());
-				}
+//				for (Pion pion : damesCreees) {
+//					tourCourant.getDamesCreees().add(pion.getNumeroCase());
+//				}
 				communicationServeur.sendTourFini(tourCourant);
+				
 				// --- Remise en attente
 				setEtat(ATTENTE);
 				updateGame();
