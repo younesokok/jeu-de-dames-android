@@ -20,11 +20,17 @@ public interface CommucationServeurInterface {
 	 */
 	public Tour rejoindrePartie(String pseudo);
 	/**
+	 * Attend l'arrivée d'un nouveau joueur
+	 * @param Tour tour Tour contenant l'id de la partie en cours
+	 * @return Tour Tour courant
+	 */
+	public Tour attendreAutreJoueur(Tour ancienTour);
+	/**
 	 * Attend le tour en cours à partir du serveur et le renvoie
 	 * @param Tour tour Tour contenant l'id de la partie en cours
 	 * @return tour courant
 	 */
-	public Tour attendreTourCourant(Tour tour);
+	public Tour attendreTourCourant(Tour ancienTour);
 	/**
 	 * Envoi un nouveau tour terminé au serveur
 	 * @param tour Tour terminé

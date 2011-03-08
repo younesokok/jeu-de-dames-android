@@ -21,6 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.dames.DamierView;
 import android.dames.Tour;
 import android.util.Log;
 
@@ -50,6 +51,30 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Tour tourCourant = parserXmlTour(url);
 		Log.i(tag, tourCourant.toString());
 		return tourCourant;
+	}
+	
+	@Override
+	public Tour attendreAutreJoueur(Tour ancienTour) {
+		Tour tourCourantServeur = getTourCourant(ancienTour);
+		Log.i(tag, "*** tourCourant ***");
+		Log.i(tag, ancienTour.toString());
+		int attente = 5*1000; // 5s
+		int compteurAttente = 0;
+		int nbAttenteMax = 0;
+		Log.i(tag, "*** tourCourant sur le serveur ***");
+		while (tourCourantServeur.getEtat() != DamierView.EN_COURS && compteurAttente < nbAttenteMax) {
+			Log.i(tag, tourCourantServeur.toString());
+			// Attente de attente secondes
+			try {
+				Thread.sleep(attente);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// Récupérations des informations du serveur
+			tourCourantServeur = getTourCourant(ancienTour);
+			compteurAttente++;
+		}
+		return tourCourantServeur;
 	}
 	
 	public Tour getTourCourant(Tour tour) {
