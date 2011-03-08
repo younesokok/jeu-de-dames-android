@@ -144,13 +144,13 @@ public class DamierView extends PlateauView {
 		if (tourCourant.getEtat() == ATTENTE_AUTRE_JOUEUR) {
 			mCouleurJoueur = BLANC;
 			mDeplacements.add(new Pion(0, (PlateauView.mNbCasesCote-1)));
-			setMode(RUNNING);
+			setEtat(ATTENTE_AUTRE_JOUEUR);
 		}
 		// Sinon, on est noir
 		else {
 			mCouleurJoueur = NOIR;
 			mDeplacements.add(new Pion(0, 0));
-			setMode(ATTENTE_TOUR_AUTRE_JOUEUR);
+			setEtat(ATTENTE_TOUR_AUTRE_JOUEUR);
 		}
 	}
 
@@ -166,6 +166,17 @@ public class DamierView extends PlateauView {
 		switch(mMode) {
 		case(RUNNING):
 			switch(mEtat){
+			// --- Attente qu'un adversaire rejoigne la partie
+			case(ATTENTE_AUTRE_JOUEUR): {
+				Toast.makeText(getContext(), "Veuillez patienter en attendant\n l'arrivée de votre adversaire !", Toast.LENGTH_LONG).show();
+				// --- Récupération des informations du serveur
+				tourCourant = communicationServeur.attendreAutreJoueur(tourCourant);
+				
+				// --- Adversaire arrivée : on rend la main au joueur
+				Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
+				setEtat(SELECT);
+				break;	
+			}
 			case(ATTENTE_TOUR_AUTRE_JOUEUR):{
 				// Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur
 				Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG).show();
@@ -604,6 +615,7 @@ public class DamierView extends PlateauView {
 				 * Au debut ou en fin de partie on relance le jeu
 				 */
 				initNewGame();
+				setMode(RUNNING);
 				updateView();
 				return (true);
 			}
