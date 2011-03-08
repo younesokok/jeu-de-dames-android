@@ -71,7 +71,7 @@ class Tour
 	
 	public function rejoindrePartie()
 	{
-		$pseudoAAjouter = $this->joueurs[0];
+		$joueurAAjouter = $this->joueurs[0];
 		// --- Parcours des fichiers (d'aujourd'hui) pour trouver une partie disponible
 		$pattern = 'XML/'.date('Y-m-d', time()).'-partie-*-tour-0.xml';
 		$fichiers = glob($pattern, GLOB_BRACE);
@@ -85,18 +85,20 @@ class Tour
 			$joueurs = $listeJoueurs->getElementsByTagName('joueur');
 			// --- On a trouvé une partie avec 0 ou 1 seul joueur
 			if (NULL != $joueurs &&
-				($joueurs->length == 0 || ($joueurs->length == 1 && $joueurs->item(0)->getAttribute('pseudo') != $pseudoAAjouter))) {
+				($joueurs->length == 0 || ($joueurs->length == 1 && $joueurs->item(0)->getAttribute('pseudo') != $joueurAAjouter[0]))) {
 				// --- Récupération de la partie
 				$this->idPartie = preg_replace('!^.*partie-(\d+)-.*$!', '$1', $fichier);
 				$this->numero = 0;
 				if ($joueurs->length == 1) {
-					$this->joueurs[1] = $joueurs->item(0)->getAttribute('pseudo');
+					$this->joueurs[1][0] = $joueurs->item(0)->getAttribute('pseudo');
+					$this->joueurs[1][1] = $joueurs->item(0)->getAttribute('couleur');
 				}
 				$this->etat = EN_COURS;
 				// --- Maj du fichier XML
 				// Creation nouvelle balise
 				$nouveauJoueur = $dom->createElement('joueur');
-				$nouveauJoueur->setAttribute('pseudo', $pseudoAAjouter);
+				$nouveauJoueur->setAttribute('pseudo', $joueurAAjouter[0]);
+				$nouveauJoueur->setAttribute('couleur', $joueurAAjouter[1]);
 				// Insertion de la nouvelle balise
 				$listeJoueurs->appendChild($nouveauJoueur);
 				// Enregistrement de l'xml
@@ -136,7 +138,7 @@ class Tour
 		if ($type == 'int') {
 			return array_map('intval', array_map('trim', explode(';', $listeUrl)));
 		}
-		return array_map('cleanPseudo', explode(';', $listeUrl));
+		return explode(';', $listeUrl);
 	}
 	public static function getMapUrl($mapUrl, $type='int:int')
 	{
@@ -152,6 +154,7 @@ class Tour
 			else if ($type = 'string:int') {
 				$tmp = explode(':', $element);
 				$tmp[0] = cleanPseudo($tmp[0]);
+				$tmp[1] = intval(trim($tmp[1]));
 				$map[] = $tmp;
 			}
 		}

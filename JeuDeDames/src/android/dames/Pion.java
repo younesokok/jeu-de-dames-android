@@ -62,7 +62,6 @@ public class Pion {
 	
 	public boolean entre2Pions(Pion pion1, Pion pion2) {
 		return ((this.y < pion2.getY() && this.y > pion1.getY()) || (this.y > pion2.getY() && this.y < pion1.getY())); 
-		
 	}
 	
 	public int getDistance(Pion aTester) {

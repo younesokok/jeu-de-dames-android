@@ -43,7 +43,7 @@ public class TourSAXParser extends DefaultHandler {
 			if(qName.equals("joueur")){
 				try {
 					String pseudo = attributs.getValue("pseudo");
-					int couleur = Integer.parseInt(attributs.getValue("pseudo"));
+					int couleur = Integer.parseInt(attributs.getValue("couleur"));
 					tour.getJoueurs().put(pseudo, couleur);
 				} catch(Exception e){
 					throw new SAXException(e);

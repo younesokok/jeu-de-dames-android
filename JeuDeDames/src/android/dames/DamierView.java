@@ -157,7 +157,7 @@ public class DamierView extends PlateauView {
 				Tour tourCourantServeur = communicationServeur.getTourCourant(tourCourant);
 				Log.i(tag, "*** tourCourant ***");
 				Log.i(tag, tourCourant.toString());
-				int attente = 5*1000; // 3s
+				int attente = 5*1000; // 5s
 				int compteurAttente = 0;
 				int nbAttenteMax = 1;
 				Log.i(tag, "*** tourCourant sur le serveur ***");
