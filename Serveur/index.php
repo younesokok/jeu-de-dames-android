@@ -1,4 +1,5 @@
 <?php
+
 if (isset($_GET['sens']) && NULL != $_GET['sens'] && '' != $_GET['sens']) {
 	include_once('include/tools.php');
 	include_once('include/Tour.php');
@@ -27,4 +28,5 @@ if (isset($_GET['sens']) && NULL != $_GET['sens'] && '' != $_GET['sens']) {
 		}
 	}
 }
+
 ?>

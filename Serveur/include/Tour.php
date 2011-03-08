@@ -89,16 +89,19 @@ class Tour
 				// --- Récupération de la partie
 				$this->idPartie = preg_replace('!^.*partie-(\d+)-.*$!', '$1', $fichier);
 				$this->numero = 0;
+				$this->joueurs[0][1] = NOIR;
 				if ($joueurs->length == 1) {
 					$this->joueurs[1][0] = $joueurs->item(0)->getAttribute('pseudo');
 					$this->joueurs[1][1] = $joueurs->item(0)->getAttribute('couleur');
 				}
 				$this->etat = EN_COURS;
 				// --- Maj du fichier XML
+				$etat = $dom->getElementsByTagName('etat')->item(0);
+				$etat->nodeValue = EN_COURS;
 				// Creation nouvelle balise
 				$nouveauJoueur = $dom->createElement('joueur');
-				$nouveauJoueur->setAttribute('pseudo', $joueurAAjouter[0]);
-				$nouveauJoueur->setAttribute('couleur', $joueurAAjouter[1]);
+				$nouveauJoueur->setAttribute('pseudo', $this->joueurs[0][0]);
+				$nouveauJoueur->setAttribute('couleur', $this->joueurs[0][1]);
 				// Insertion de la nouvelle balise
 				$listeJoueurs->appendChild($nouveauJoueur);
 				// Enregistrement de l'xml
@@ -115,6 +118,7 @@ class Tour
 		if (!$trouve) {
 			$this->idPartie = preg_replace('!^.*partie-(\d+)-.*$!', '$1', @$dernierFichier)+1;
 			$this->numero = 0;
+			$this->joueurs[0][1] = BLANC;
 			// Création de l'xml
 			$this->getXML();
 		}
