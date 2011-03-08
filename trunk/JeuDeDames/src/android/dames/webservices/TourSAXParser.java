@@ -43,7 +43,8 @@ public class TourSAXParser extends DefaultHandler {
 			if(qName.equals("joueur")){
 				try {
 					String pseudo = attributs.getValue("pseudo");
-					tour.getJoueurs().add(pseudo);
+					int couleur = Integer.parseInt(attributs.getValue("pseudo"));
+					tour.getJoueurs().put(pseudo, couleur);
 				} catch(Exception e){
 					throw new SAXException(e);
 				}
@@ -87,6 +88,10 @@ public class TourSAXParser extends DefaultHandler {
 		}
 		else if(qName.equals("numero")){
 			tour.setNumero(Integer.parseInt(buffer.toString()));
+			buffer = null;
+		}
+		else if(qName.equals("etat")){
+			tour.setEtat(Integer.parseInt(buffer.toString()));
 			buffer = null;
 		}
 	}

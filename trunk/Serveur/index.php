@@ -11,7 +11,7 @@ if (isset($_GET['sens']) && NULL != $_GET['sens'] && '' != $_GET['sens']) {
 			}
 			else if ('getTourCourant' == $_GET['action']) {
 				$tour = new Tour(array('idPartie' => $_GET['idPartie'], 'numero' => $_GET['numero']));
-				$tour->getPartie();
+				$tour->getTourCourant();
 			}
 			header("Content-Type: text/xml" );
 			echo $tour->getXML();

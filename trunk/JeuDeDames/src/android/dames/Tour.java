@@ -11,21 +11,29 @@ public class Tour implements Serializable {
 	/* --- Attributs --- */
 	private int idPartie;
 	private int numero;
-	private List<String> joueurs;
+	private int etat;
+	private Map<String, Integer> joueurs;
 	private Map<Integer, Integer> deplacementsPionJoue;
 	private List<Integer> pionsManges;
 	private List<Integer> damesCreees;
 	
+	public static final int EN_COURS = 1;
+	public static final int ATTENTE_AUTRE_JOUEUR = 0;
+	
 	/* --- Constructeurs --- */
 	public Tour() {
-		joueurs = new ArrayList<String>();
+		idPartie = 0;
+		numero = 0;
+		etat = ATTENTE_AUTRE_JOUEUR;
+		joueurs = new HashMap<String, Integer>();
 		deplacementsPionJoue = new HashMap<Integer, Integer>();
 		pionsManges = new ArrayList<Integer>();
 		damesCreees = new ArrayList<Integer>();
 	}
-	public Tour(int idPartie, int numero, List<String> joueurs, Map<Integer, Integer> deplacementsPionJoue, List<Integer> pionsManges, List<Integer> damesCreees) {
+	public Tour(int idPartie, int numero, int etat, HashMap<String, Integer> joueurs, Map<Integer, Integer> deplacementsPionJoue, List<Integer> pionsManges, List<Integer> damesCreees) {
 		this.idPartie = idPartie;
 		this.numero = numero;
+		this.etat = etat;
 		this.joueurs = joueurs;
 		this.deplacementsPionJoue = deplacementsPionJoue;
 		this.pionsManges = pionsManges;
@@ -36,11 +44,11 @@ public class Tour implements Serializable {
 	
 	/* --- Getter, setter --- */
 	public String toString() {
-		StringBuffer sb = new StringBuffer("Tour "+numero+" de la partie "+idPartie+" : \n");
+		StringBuffer sb = new StringBuffer("Tour "+numero+" de la partie "+idPartie+" ("+(etat == EN_COURS ? "en cours" : "attente autre joueur")+") : \n");
 		sb.append("Joueurs : \n");
 		int i = 1;
-		for (String joueur : joueurs) {
-			sb.append("Joueur "+i+" : "+joueur+"\n");
+		for (Entry<String, Integer> joueur : joueurs.entrySet()) {
+			sb.append("Joueur "+i+" : "+joueur.getKey()+" ("+(joueur.getValue() == DamierView.BLANC ? "blanc" : "noir")+")\n");
 			i++;
 		}
 		sb.append(getStringJoueurs()+"\n");
@@ -112,17 +120,19 @@ public class Tour implements Serializable {
 		}
 		return sb.toString();
 	}
-	public void setJoueurs(List<String> joueurs) { this.joueurs = joueurs; }
+	public void setJoueurs(HashMap<String, Integer> joueurs) { this.joueurs = joueurs; }
 	public void razJoueurs() { joueurs.clear(); }
-	public List<String> getJoueurs() { return joueurs; }
+	public Map<String, Integer> getJoueurs() { return joueurs; }
 	public String getStringJoueurs() {
 		StringBuffer sb = new StringBuffer();
 		if (null != joueurs && joueurs.size() > 0) {
-			for (String dame : joueurs) {
-				sb.append(dame+";");
+			for (Entry<String, Integer> joueur : joueurs.entrySet()) {
+				sb.append(joueur.getKey()+":"+joueur.getValue()+";");
 			}
 			sb.deleteCharAt(sb.length()-1);
 		}
 		return sb.toString();
 	}
+	public void setEtat(int etat) { this.etat = etat; }
+	public int getEtat() { return etat; }
 }

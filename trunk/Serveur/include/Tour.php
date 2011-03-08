@@ -8,6 +8,7 @@ class Tour
 	private $deplacementsPionJoue;
 	private $pionsManges;
 	private $damesCreees;
+	private $etat;
 	
 	public function Tour($params)
 	{
@@ -17,10 +18,11 @@ class Tour
 	{
 		$this->idPartie = intval(trim(@$params['idPartie']));
 		$this->numero = intval(trim(@$params['numero']));
-		$this->joueurs = $this->getListeStringUrl(@$params['joueurs']);
+		$this->joueurs = $this->getMapUrl(@$params['joueurs'], 'string:int');
 		$this->deplacementsPionJoue = $this->getMapUrl(@$params['deplacementsPionJoue']);
-		$this->pionsManges = $this->getListeIntUrl(@$params['pionsManges']);
-		$this->damesCreees = $this->getListeIntUrl(@$params['damesCreees']);
+		$this->pionsManges = $this->getListeUrl(@$params['pionsManges']);
+		$this->damesCreees = $this->getListeUrl(@$params['damesCreees']);
+		$this->etat = (isset($params['etat']) && NULL != $params['etat'] ? intval(trim($params['etat'])) : (count($this->joueurs) == 2 ? EN_COURS : ATTENTE_AUTRE_JOUEUR));
 	}
 	
 	public function getXML()
@@ -32,11 +34,12 @@ class Tour
 		$xml = '<?xml version="1.0" encoding="utf-8"?>'."\n".
 		'<tour>'."\n".
 			"\t".'<idPartie>'.$this->idPartie.'</idPartie>'."\n".
-			"\t".'<numero>'.$this->numero.'</numero>'."\n";
+			"\t".'<numero>'.$this->numero.'</numero>'."\n".
+			"\t".'<etat>'.$this->etat.'</etat>'."\n";
 			if (NULL != $this->joueurs && '' != $this->joueurs && count($this->joueurs) > 0) {
 				$xml .= "\t".'<joueurs>'."\n";
 				foreach($this->joueurs AS $joueur) {
-					$xml .= "\t\t".'<joueur pseudo="'.$joueur.'" />'."\n";
+					$xml .= "\t\t".'<joueur pseudo="'.$joueur[0].'" couleur="'.$joueur[1].'" />'."\n";
 				}
 				$xml .= "\t".'</joueurs>'."\n";
 			}
@@ -62,7 +65,7 @@ class Tour
 				$xml .= "\t".'</damesCreees>'."\n";
 			}
 		$xml .= '</tour>';
-		$fd = file_put_contents($fichier, $xml);
+		file_put_contents($fichier, $xml);
 		return $xml;
 	}
 	
@@ -89,6 +92,7 @@ class Tour
 				if ($joueurs->length == 1) {
 					$this->joueurs[1] = $joueurs->item(0)->getAttribute('pseudo');
 				}
+				$this->etat = EN_COURS;
 				// --- Maj du fichier XML
 				// Creation nouvelle balise
 				$nouveauJoueur = $dom->createElement('joueur');
@@ -114,31 +118,27 @@ class Tour
 		}
 	}
 	
-	public function getPartie()
+	public function getTourCourant()
 	{
 		// Si le tour suivant existe : on incrémente numéro, ce qui nous permettra de renvoyer ce tour, qui est le tour courant
 		$fichier = 'XML/'.date('Y-m-d', time()).'-partie-'.$this->idPartie.'-tour-'.($this->numero+1).'.xml';
 		if (is_file($fichier)) {
 			$this->numero = $this->numero+1;
 		}
-		// Sinon, on incrémente par numéro, donc on renverra le tour courant
+		// Sinon, on incrémente pas numéro, donc on renverra le tour courant
 	}
 	
-	public static function getListeIntUrl($listeUrl)
+	public static function getListeUrl($listeUrl, $type='int')
 	{
 		if (NULL == $listeUrl || '' == $listeUrl) {
 			return NULL;
 		}
-		return array_map('intval', array_map('trim', explode(';', $listeUrl)));
-	}
-	public static function getListeStringUrl($listeUrl)
-	{
-		if (NULL == $listeUrl || '' == $listeUrl) {
-			return NULL;
+		if ($type == 'int') {
+			return array_map('intval', array_map('trim', explode(';', $listeUrl)));
 		}
 		return array_map('cleanPseudo', explode(';', $listeUrl));
 	}
-	public static function getMapUrl($mapUrl)
+	public static function getMapUrl($mapUrl, $type='int:int')
 	{
 		if (NULL == $mapUrl || '' == $mapUrl) {
 			return NULL;
@@ -146,7 +146,14 @@ class Tour
 		$elements = explode(';', $mapUrl);
 		$map = array();
 		foreach($elements AS $element) {
-			$map[] = array_map('intval', array_map('trim', explode(':', $element)));
+			if ($type == 'int:int') {
+				$map[] = array_map('intval', array_map('trim', explode(':', $element)));
+			}
+			else if ($type = 'string:int') {
+				$tmp = explode(':', $element);
+				$tmp[0] = cleanPseudo($tmp[0]);
+				$map[] = $tmp;
+			}
 		}
 		return $map;
 	}
@@ -163,6 +170,8 @@ class Tour
 	public function setPionsManges($pionsManges) { $this->pionsManges = $pionsManges; }
 	public function getDamesCreees() { return $this->damesCreees; }
 	public function setDamesCreees($pionsMadamesCreeesnges) { $this->damesCreees = $damesCreees; }
+	public function getEtat() { return $this->etat; }
+	public function setNEtat($etat) { $this->etat = $etat; }
 }
 
 ?>
