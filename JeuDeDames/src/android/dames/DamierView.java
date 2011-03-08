@@ -1,6 +1,7 @@
 package android.dames;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -75,8 +76,8 @@ public class DamierView extends PlateauView {
 	 * Info sur le joueur courrent
 	 */
 	private int mCouleurJoueur;
-	private static final int BLANC = 0;
-	private static final int NOIR = 1;
+	public static final int BLANC = 0;
+	public static final int NOIR = 1;
 	private static final int OBSERVATEUR = 2;
 	private Tour tourCourant;
 	
@@ -124,10 +125,16 @@ public class DamierView extends PlateauView {
 		}
 		mScoreBlanc = 0;
 		mScoreNoir = 0;
-		mCouleurJoueur = BLANC;
-
-		/* Liste des déplacements courants */
-		mDeplacements.add(new Pion(0, (PlateauView.mNbCasesCote-1)));
+		// Si on attend un autre joueur c'est qu'on est le premier, donc on est blanc
+		if (tourCourant.getEtat() == Tour.ATTENTE_AUTRE_JOUEUR) {
+			mCouleurJoueur = BLANC;
+			mDeplacements.add(new Pion(0, (PlateauView.mNbCasesCote-1)));
+		}
+		// Sinon, on est noir
+		else {
+			mCouleurJoueur = NOIR;
+			mDeplacements.add(new Pion(0, 0));
+		}
 	}
 
 	public void setTextView(TextView newTextView) {
@@ -352,33 +359,59 @@ public class DamierView extends PlateauView {
 				}	
 				
 				// --- Gestion des règles une fois tous les déplacements terminés
-				List<Pion> pionsManges = new ArrayList<Pion>();
-//				List<Pion> damesCreees = new ArrayList<Pion>();
 				// On enleve les pions/dames pris
-				// TODO
-//				Pion lastPion = null;
-//				for (Pion pion : mDeplacements) {
-//					if (lastPion == null) {
-//						lastPion = pion;
-//						continue;
-//					}
-//					if (mCouleurJoueur == BLANC) {
-//						for (Iterator<Pion> it = mPionsNoir.iterator(); it.hasNext();) {
-//							Pion pionNoir = it.next();
-//							
-//						}
-//					}
-//					lastPion = pion;
-//				}
+				Pion lastDeplacement = null;
+				for (Pion deplacement : mDeplacements) {
+					if (lastDeplacement == null) {
+						lastDeplacement = deplacement;
+						continue;
+					}
+					index = 0;
+					if (mCouleurJoueur == BLANC) {
+						for (Pion pion : mPionsNoir) {
+							// TODO : vérifier la règle de prise d'un pion
+							if (pion.equalsDiag(deplacement) && pion.entre2Pions(lastDeplacement, deplacement)) {
+								// Ajout à la liste des pions mangés
+								tourCourant.getPionsManges().add(pion.getNumeroCase());
+								// On le retire de la liste des pions
+								mPionsNoir.remove(index);
+							}
+							index++;
+						}
+					}
+					if (mCouleurJoueur == NOIR) {
+						for (Pion pion : mPionsBlanc) {
+							// TODO : vérifier la règle de prise d'un pion
+							if (pion.equalsDiag(deplacement) && pion.entre2Pions(lastDeplacement, deplacement)) {
+								// Ajout à la liste des pions mangés
+								tourCourant.getPionsManges().add(pion.getNumeroCase());
+								// On le retire de la liste des pions
+								mPionsBlanc.remove(index);
+							}
+							index++;
+						}
+					}
+					lastDeplacement = deplacement;
+				}
 				// On transforme les pions en dames
 				Pion pCourant = mDeplacements.get(mDeplacements.size()-2);
+				index = 0;
 				if(pCourant.getType()==PION_BLANC && pCourant.getY()==0) {
-					index = 0;
 					for (Pion p : mPionsBlanc) {
 						if(p.equalsPosition(pCourant)) {
 							Pion nouvelleDame = new Pion(p.getX(),p.getY(),DAME_BLANC);
 							mPionsBlanc.set(index, nouvelleDame);
-//							damesCreees.add(nouvelleDame);
+							tourCourant.getDamesCreees().add(nouvelleDame.getNumeroCase());
+							break;
+						}
+						index++;
+					}
+				}
+				if(pCourant.getType() == PION_NOIR && pCourant.getY() == (PlateauView.mNbCasesCote-1)) {
+					for (Pion p : mPionsNoir) {
+						if(p.equalsPosition(pCourant)) {
+							Pion nouvelleDame = new Pion(p.getX(),p.getY(),DAME_NOIR);
+							mPionsNoir.set(index, nouvelleDame);
 							tourCourant.getDamesCreees().add(nouvelleDame.getNumeroCase());
 							break;
 						}
@@ -387,12 +420,13 @@ public class DamierView extends PlateauView {
 				}
 				
 				// --- Envoi au serveur
-				tourCourant.incrNumero();
 				tourCourant.preparerProchainTour();
 				// Ajout des déplacements du pion
 				// Note : DeplacementsPionJoue prend en paramètre : positionInitiale -> positionSuivante, ..., positionIntermediaire -> positionFinale 
 				int lastCase = -1;
-				for (Pion pion : mDeplacements) {
+				List<Pion> mDeplacementsInverse = mDeplacements;
+				Collections.reverse(mDeplacementsInverse);
+				for (Pion pion : mDeplacementsInverse) {
 					if (lastCase == -1) {
 						lastCase = pion.getNumeroCase();
 						continue;
@@ -400,12 +434,6 @@ public class DamierView extends PlateauView {
 					tourCourant.getDeplacementsPionJoue().put(lastCase, pion.getNumeroCase());
 					lastCase = pion.getNumeroCase();
 				}
-				for (Pion pion : pionsManges) {
-					tourCourant.getPionsManges().add(pion.getNumeroCase());
-				}
-//				for (Pion pion : damesCreees) {
-//					tourCourant.getDamesCreees().add(pion.getNumeroCase());
-//				}
 				communicationServeur.sendTourFini(tourCourant);
 				
 				// --- Remise en attente

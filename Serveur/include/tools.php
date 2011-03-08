@@ -1,5 +1,8 @@
 <?php
 
+define('EN_COURS', 1);
+define('ATTENTE_AUTRE_JOUEUR', 0);
+
 /**
  * Clean une chaine de caractères pour être un pseudo propre
  * @param string $pseudo Chaine de caractères à cleaner
