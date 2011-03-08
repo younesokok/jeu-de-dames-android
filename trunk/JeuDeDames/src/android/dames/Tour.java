@@ -17,14 +17,11 @@ public class Tour implements Serializable {
 	private List<Integer> pionsManges;
 	private List<Integer> damesCreees;
 	
-	public static final int EN_COURS = 1;
-	public static final int ATTENTE_AUTRE_JOUEUR = 0;
-	
 	/* --- Constructeurs --- */
 	public Tour() {
 		idPartie = 0;
 		numero = 0;
-		etat = ATTENTE_AUTRE_JOUEUR;
+		etat = DamierView.ATTENTE_AUTRE_JOUEUR;
 		joueurs = new HashMap<String, Integer>();
 		deplacementsPionJoue = new HashMap<Integer, Integer>();
 		pionsManges = new ArrayList<Integer>();
@@ -44,7 +41,7 @@ public class Tour implements Serializable {
 	
 	/* --- Getter, setter --- */
 	public String toString() {
-		StringBuffer sb = new StringBuffer("Tour "+numero+" de la partie "+idPartie+" ("+(etat == EN_COURS ? "en cours" : "attente autre joueur")+") : \n");
+		StringBuffer sb = new StringBuffer("Tour "+numero+" de la partie "+idPartie+" ("+(etat == DamierView.EN_COURS ? "en cours" : "attente autre joueur")+") : \n");
 		sb.append("Joueurs : \n");
 		int i = 1;
 		for (Entry<String, Integer> joueur : joueurs.entrySet()) {

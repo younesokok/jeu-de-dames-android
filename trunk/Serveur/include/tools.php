@@ -1,7 +1,8 @@
 <?php
 
-define('EN_COURS', 1);
-define('ATTENTE_AUTRE_JOUEUR', 0);
+define('EN_COURS', 7);
+define('ATTENTE_AUTRE_JOUEUR', 5);
+define('FINI', 6);
 define('BLANC', 1);
 define('NOIR', 0);
 /**

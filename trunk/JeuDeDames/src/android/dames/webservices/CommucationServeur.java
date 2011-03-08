@@ -52,7 +52,6 @@ public class CommucationServeur implements CommucationServeurInterface {
 		return tourCourant;
 	}
 	
-	@Override
 	public Tour getTourCourant(Tour tour) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "receive");
@@ -64,6 +63,30 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Tour tourCourant = parserXmlTour(url);
 		Log.i(tag, tourCourant.toString());
 		return tourCourant;
+	}
+	
+	@Override
+	public Tour attendreTourCourant(Tour ancienTour) {
+		Tour tourCourantServeur = getTourCourant(ancienTour);
+		Log.i(tag, "*** tourCourant ***");
+		Log.i(tag, ancienTour.toString());
+		int attente = 5*1000; // 5s
+		int compteurAttente = 0;
+		int nbAttenteMax = 0;
+		Log.i(tag, "*** tourCourant sur le serveur ***");
+		while (tourCourantServeur.getNumero() <= ancienTour.getNumero() && compteurAttente < nbAttenteMax) {
+			Log.i(tag, tourCourantServeur.toString());
+			// Attente de attente secondes
+			try {
+				Thread.sleep(attente);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// Récupérations des informations du serveur
+			tourCourantServeur = getTourCourant(ancienTour);
+			compteurAttente++;
+		}
+		return tourCourantServeur;
 	}
 
 	@Override

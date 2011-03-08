@@ -38,8 +38,23 @@ public class DamierView extends PlateauView {
 	public static final int SELECT = 1;
 	public static final int PLAY = 2;
 	public static final int VALID = 3;
-	public static final int ATTENTE = 4;
-	//	public static final int ... = 4;
+	/**
+	 * Variable signifiant que l'on attend que l'autre joueur joue
+	 */
+	public static final int ATTENTE_TOUR_AUTRE_JOUEUR = 4;
+	/**
+	 * Variabe signifiant que l'on attend qu'un autre joueur rejoigne la partie
+	 */
+	public static final int ATTENTE_AUTRE_JOUEUR = 5;
+	/**
+	 * Variable signifiant que la partie est finie
+	 */
+	public static final int FINI = 6;
+	/**
+	 * Variable générique précisant que la partie est en cours
+	 * == AFFICHE, SELECT, PLAY, VALID, ATTENTE_TOUR_AUTRE_JOUEUR
+	 */
+	public static final int EN_COURS = 10;
 
 	/**
 	 * On definit les différents types de cases
@@ -126,14 +141,16 @@ public class DamierView extends PlateauView {
 		mScoreBlanc = 0;
 		mScoreNoir = 0;
 		// Si on attend un autre joueur c'est qu'on est le premier, donc on est blanc
-		if (tourCourant.getEtat() == Tour.ATTENTE_AUTRE_JOUEUR) {
+		if (tourCourant.getEtat() == ATTENTE_AUTRE_JOUEUR) {
 			mCouleurJoueur = BLANC;
 			mDeplacements.add(new Pion(0, (PlateauView.mNbCasesCote-1)));
+			setMode(RUNNING);
 		}
 		// Sinon, on est noir
 		else {
 			mCouleurJoueur = NOIR;
 			mDeplacements.add(new Pion(0, 0));
+			setMode(ATTENTE_TOUR_AUTRE_JOUEUR);
 		}
 	}
 
@@ -149,37 +166,18 @@ public class DamierView extends PlateauView {
 		switch(mMode) {
 		case(RUNNING):
 			switch(mEtat){
-			case(ATTENTE):{
+			case(ATTENTE_TOUR_AUTRE_JOUEUR):{
 				// Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur
 				Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG).show();
 
 				// --- Récupération des informations du serveur
-				Tour tourCourantServeur = communicationServeur.getTourCourant(tourCourant);
-				Log.i(tag, "*** tourCourant ***");
-				Log.i(tag, tourCourant.toString());
-				int attente = 5*1000; // 5s
-				int compteurAttente = 0;
-				int nbAttenteMax = 1;
-				Log.i(tag, "*** tourCourant sur le serveur ***");
-				while (tourCourantServeur.getNumero() <= tourCourant.getNumero() && compteurAttente < nbAttenteMax) {
-					Log.i(tag, tourCourantServeur.toString());
-					// Attente de attente secondes
-					try {
-						Thread.sleep(attente);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					// Récupérations des informations du serveur
-					tourCourantServeur = communicationServeur.getTourCourant(tourCourant);
-					compteurAttente++;
-				}
-				// Maj du tour courant
-				tourCourant = tourCourantServeur;
+				int numeroAncienTour = tourCourant.getNumero();
+				tourCourant = communicationServeur.attendreTourCourant(tourCourant);
 				
 				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
 				// Si on a besoin de modifier
-				if (tourCourantServeur.getNumero() > tourCourant.getNumero()) {
+				if (tourCourant.getNumero() > numeroAncienTour) {
 					// Maj des déplacements
 					for (Entry<Integer, Integer> deplacement : tourCourant.getDeplacementsPionJoue().entrySet()) {
 						int index = 0;
@@ -437,7 +435,7 @@ public class DamierView extends PlateauView {
 				communicationServeur.sendTourFini(tourCourant);
 				
 				// --- Remise en attente
-				setEtat(ATTENTE);
+				setEtat(ATTENTE_TOUR_AUTRE_JOUEUR);
 				updateGame();
 				return(true);
 				//break;
@@ -606,7 +604,6 @@ public class DamierView extends PlateauView {
 				 * Au debut ou en fin de partie on relance le jeu
 				 */
 				initNewGame();
-				setMode(RUNNING);
 				updateView();
 				return (true);
 			}
