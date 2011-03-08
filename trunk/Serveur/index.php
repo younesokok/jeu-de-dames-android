@@ -6,7 +6,7 @@ if (isset($_GET['sens']) && NULL != $_GET['sens'] && '' != $_GET['sens']) {
 	if ('receive' == $_GET['sens']) {
 		if (isset($_GET['action']) && NULL != $_GET['action']) {
 			if ('rejoindrePartie' == $_GET['action']) {
-				$tour = new Tour(array('joueurs' => cleanPseudo($_GET['pseudo'])));
+				$tour = new Tour(array('joueurs' => $_GET['joueur']));
 				$tour->rejoindrePartie();
 			}
 			else if ('getTourCourant' == $_GET['action']) {

@@ -44,7 +44,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "receive");
 		params.put("action", "rejoindrePartie");
-		params.put("pseudo", pseudo);
+		params.put("joueur", pseudo+":1");
 		URL url = buildUrl(this.url, params);
 		Log.i(tag, url.toString());
 		Tour tourCourant = parserXmlTour(url);
