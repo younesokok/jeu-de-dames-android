@@ -82,34 +82,36 @@ class Tour
 			$dom->load($fichier);
 			// Liste des joueurs
 			$listeJoueurs = $dom->getElementsByTagName('joueurs')->item(0);
-			$joueurs = $listeJoueurs->getElementsByTagName('joueur');
-			// --- On a trouvé une partie avec 0 ou 1 seul joueur
-			if (NULL != $joueurs &&
-				($joueurs->length == 0 || ($joueurs->length == 1 && $joueurs->item(0)->getAttribute('pseudo') != $joueurAAjouter[0]))) {
-				// --- Récupération de la partie
-				$this->idPartie = preg_replace('!^.*partie-(\d+)-.*$!', '$1', $fichier);
-				$this->numero = 0;
-				$this->joueurs[0][1] = NOIR;
-				if ($joueurs->length == 1) {
-					$this->joueurs[1][0] = $joueurs->item(0)->getAttribute('pseudo');
-					$this->joueurs[1][1] = $joueurs->item(0)->getAttribute('couleur');
-				}
-				$this->etat = EN_COURS;
-				// --- Maj du fichier XML
-				$etat = $dom->getElementsByTagName('etat')->item(0);
-				$etat->nodeValue = EN_COURS;
-				// Creation nouvelle balise
-				$nouveauJoueur = $dom->createElement('joueur');
-				$nouveauJoueur->setAttribute('pseudo', $this->joueurs[0][0]);
-				$nouveauJoueur->setAttribute('couleur', $this->joueurs[0][1]);
-				// Insertion de la nouvelle balise
-				$listeJoueurs->appendChild($nouveauJoueur);
-				// Enregistrement de l'xml
-				$nouveauXml = $dom->saveXML();
-				if ($nouveauXml) {
-					$trouve = true;
-					file_put_contents($fichier, $nouveauXml);
-					break;
+			if (NULL != $listeJoueurs) {
+				$joueurs = $listeJoueurs->getElementsByTagName('joueur');
+				// --- On a trouvé une partie avec 0 ou 1 seul joueur
+				if (NULL != $joueurs &&
+					($joueurs->length == 0 || ($joueurs->length == 1 && $joueurs->item(0)->getAttribute('pseudo') != $joueurAAjouter[0]))) {
+					// --- Récupération de la partie
+					$this->idPartie = preg_replace('!^.*partie-(\d+)-.*$!', '$1', $fichier);
+					$this->numero = 0;
+					$this->joueurs[0][1] = NOIR;
+					if ($joueurs->length == 1) {
+						$this->joueurs[1][0] = $joueurs->item(0)->getAttribute('pseudo');
+						$this->joueurs[1][1] = $joueurs->item(0)->getAttribute('couleur');
+					}
+					$this->etat = EN_COURS;
+					// --- Maj du fichier XML
+					$etat = $dom->getElementsByTagName('etat')->item(0);
+					$etat->nodeValue = EN_COURS;
+					// Creation nouvelle balise
+					$nouveauJoueur = $dom->createElement('joueur');
+					$nouveauJoueur->setAttribute('pseudo', $this->joueurs[0][0]);
+					$nouveauJoueur->setAttribute('couleur', $this->joueurs[0][1]);
+					// Insertion de la nouvelle balise
+					$listeJoueurs->appendChild($nouveauJoueur);
+					// Enregistrement de l'xml
+					$nouveauXml = $dom->saveXML();
+					if ($nouveauXml) {
+						$trouve = true;
+						file_put_contents($fichier, $nouveauXml);
+						break;
+					}
 				}
 			}
 			$dernierFichier = $fichier;
