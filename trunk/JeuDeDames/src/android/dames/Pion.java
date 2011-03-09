@@ -1,5 +1,7 @@
 package android.dames;
 
+import java.util.List;
+
 import android.util.Log;
 
 public class Pion {
@@ -63,6 +65,18 @@ public class Pion {
 	
 	public int getDistance(Pion aTester) {
 		return (Math.abs(x-aTester.x));
+	}
+	
+	public static boolean is1PionPar1Pion(Pion position1, Pion position2, List<Pion> pionsAdverses) {
+		if (!position1.equalsDiag(position2)) {
+			return false;
+		}
+		for(Pion pionAdverse : pionsAdverses) {
+			if (pionAdverse.equalsDiag(position1) && pionAdverse.getDistance(position1) == 1 && pionAdverse.getDistance(position2) == 1) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
