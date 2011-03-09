@@ -1,6 +1,6 @@
 <?php
 
-define('EN_COURS', 7);
+define('EN_COURS', 10);
 define('ATTENTE_AUTRE_JOUEUR', 5);
 define('FINI', 6);
 define('BLANC', 1);
