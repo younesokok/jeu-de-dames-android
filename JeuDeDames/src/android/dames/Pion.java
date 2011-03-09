@@ -81,8 +81,8 @@ public class Pion {
 	 * @param numeroCase Numéro de la case sur lequel est situé le pion
 	 */
 	public void setXYParNumeroCase(int numeroCase) {
-		y = numeroCase%PlateauView.mNbCasesCote;
-		x = numeroCase-y/PlateauView.mNbCasesCote;
+		x = numeroCase%PlateauView.mNbCasesCote;
+		y = (numeroCase-x)/PlateauView.mNbCasesCote;
 	}
 	
 
