@@ -183,7 +183,7 @@ public class DamierView extends PlateauView {
 
 				// --- Récupération des informations du serveur
 				int numeroAncienTour = tourCourant.getNumero();
-				tourCourant = communicationServeur.attendreTourCourant(tourCourant);
+				tourCourant = communicationServeur.attendreNouveauTour(tourCourant);
 				
 				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
@@ -267,21 +267,23 @@ public class DamierView extends PlateauView {
 			case(SELECT):{
 
 				/* Gestion des règles lors de la selection d'un pion */			
+				List<Pion> listePions = null;
 				if(mCouleurJoueur==BLANC) {
-					int index = 0;
-					for (Pion p : mPionsBlanc) {
-						if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-							mDeplacements.remove(mDeplacements.size()-1);
-							mDeplacements.add(new Pion(p.getX(),p.getY()));
-							mDeplacements.add(new Pion(p.getX(),p.getY(),p.getType()));
-							setEtat(PLAY);
-						}
-						index++;
-					}
-					updateView();
-					return(true);
+					listePions = mPionsBlanc;
 				}
-				break;	
+				else {
+					listePions = mPionsNoir;
+				}
+				int index = 0;
+				for (Pion p : listePions) {
+					if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+						mDeplacements.add(new Pion(p.getX(),p.getY(),p.getType()));
+						setEtat(PLAY);
+					}
+					index++;
+				}
+				updateView();
+				return(true);
 			}
 
 			case(PLAY):{
@@ -318,19 +320,18 @@ public class DamierView extends PlateauView {
 								index++;
 							}
 							/* Si on arrive ici c'est que la case est vide */
-							// On positionne le pion dans sa nouvelle case
-							mPionsBlanc.add(mDeplacements.get(mDeplacements.size()-1));
-							// On l'enleve de sa case précédente
+							// On modifie l'emplacement du pion de l'index précédent
 							index = 0;
 							for (Pion p : mPionsBlanc) {
 								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-2))){
-									mPionsBlanc.remove(index);
+									mPionsBlanc.set(index, mDeplacements.get(mDeplacements.size()-1));
 									break;
 								}
 								index++;
 							}
 							// On permet de continuer le déplacement
-							mDeplacements.add(new Pion(mDeplacements.get(mDeplacements.size()-1).getX(),mDeplacements.get(mDeplacements.size()-1).getY()));
+//							mDeplacements.add(new Pion(mDeplacements.get(mDeplacements.size()-1).getX(),mDeplacements.get(mDeplacements.size()-1).getY()));
+							mDeplacements.add(mDeplacements.get(mDeplacements.size()-1));
 							toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
 							toast.show();
 							setEtat(AFFICHE);
@@ -360,6 +361,7 @@ public class DamierView extends PlateauView {
 					return(true);
 				}	
 				/* Gestion d'un pion levé - mais pas joué */
+				// TODO
 				if(mEtatPrecedent==PLAY) {
 					toast = Toast.makeText(getContext(), "Vous devez relacher votre pion !", Toast.LENGTH_LONG);
 					toast.show();
@@ -368,6 +370,8 @@ public class DamierView extends PlateauView {
 				}	
 				
 				// --- Gestion des règles une fois tous les déplacements terminés
+				// Preparation pour l'envoi au serveur
+				tourCourant.preparerProchainTour();
 				// On enleve les pions/dames pris
 				Pion lastDeplacement = null;
 				for (Pion deplacement : mDeplacements) {
@@ -429,10 +433,10 @@ public class DamierView extends PlateauView {
 				}
 				
 				// --- Envoi au serveur
-				tourCourant.preparerProchainTour();
 				// Ajout des déplacements du pion
 				// Note : DeplacementsPionJoue prend en paramètre : positionInitiale -> positionSuivante, ..., positionIntermediaire -> positionFinale 
 				int lastCase = -1;
+				// TODO : à vérifer carrément !
 				List<Pion> mDeplacementsInverse = mDeplacements;
 				Collections.reverse(mDeplacementsInverse);
 				for (Pion pion : mDeplacementsInverse) {
@@ -610,7 +614,7 @@ public class DamierView extends PlateauView {
 	public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			if (mMode == READY | mMode == LOSE) {
+			if (mMode == READY || mMode == LOSE) {
 				/*
 				 * Au debut ou en fin de partie on relance le jeu
 				 */

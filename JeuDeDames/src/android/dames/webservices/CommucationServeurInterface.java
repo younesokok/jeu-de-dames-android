@@ -30,7 +30,7 @@ public interface CommucationServeurInterface {
 	 * @param Tour tour Tour contenant l'id de la partie en cours
 	 * @return tour courant
 	 */
-	public Tour attendreTourCourant(Tour ancienTour);
+	public Tour attendreNouveauTour(Tour ancienTour);
 	/**
 	 * Envoi un nouveau tour terminé au serveur
 	 * @param tour Tour terminé

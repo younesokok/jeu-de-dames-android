@@ -33,6 +33,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 	/* --- Attributs --- */
 	private String url;
 	private final String tag = "CommucationServeur : ";
+	private final int nbAttenteMax = 400;
 	
 	/* --- Constructeurs --- */
 	public CommucationServeur(String url) {
@@ -45,7 +46,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("sens", "receive");
 		params.put("action", "rejoindrePartie");
-		params.put("joueur", pseudo+":1");
+		params.put("joueur", pseudo+":"+DamierView.BLANC);
 		URL url = buildUrl(this.url, params);
 		Log.i(tag, url.toString());
 		Tour tourCourant = parserXmlTour(url);
@@ -60,7 +61,6 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Log.i(tag, ancienTour.toString());
 		int attente = 5*1000; // 5s
 		int compteurAttente = 0;
-		int nbAttenteMax = 0;
 		Log.i(tag, "*** tourCourant sur le serveur ***");
 		while (tourCourantServeur.getEtat() != DamierView.EN_COURS && compteurAttente < nbAttenteMax) {
 			Log.i(tag, tourCourantServeur.toString());
@@ -91,13 +91,12 @@ public class CommucationServeur implements CommucationServeurInterface {
 	}
 	
 	@Override
-	public Tour attendreTourCourant(Tour ancienTour) {
+	public Tour attendreNouveauTour(Tour ancienTour) {
 		Tour tourCourantServeur = getTourCourant(ancienTour);
 		Log.i(tag, "*** tourCourant ***");
 		Log.i(tag, ancienTour.toString());
 		int attente = 5*1000; // 5s
 		int compteurAttente = 0;
-		int nbAttenteMax = 0;
 		Log.i(tag, "*** tourCourant sur le serveur ***");
 		while (tourCourantServeur.getNumero() <= ancienTour.getNumero() && compteurAttente < nbAttenteMax) {
 			Log.i(tag, tourCourantServeur.toString());
