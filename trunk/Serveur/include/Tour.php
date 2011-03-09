@@ -7,7 +7,7 @@ class Tour
 	private $joueurs;
 	private $deplacementsPionJoue;
 	private $pionsManges;
-	private $damesCreees;
+	private $dameCreee;
 	private $etat;
 	
 	public function Tour($params)
@@ -19,9 +19,9 @@ class Tour
 		$this->idPartie = intval(trim(@$params['idPartie']));
 		$this->numero = intval(trim(@$params['numero']));
 		$this->joueurs = $this->getMapUrl(@$params['joueurs'], 'string:int');
-		$this->deplacementsPionJoue = $this->getMapUrl(@$params['deplacementsPionJoue']);
+		$this->deplacementsPionJoue = $this->getListeUrl(@$params['deplacementsPionJoue']);
 		$this->pionsManges = $this->getListeUrl(@$params['pionsManges']);
-		$this->damesCreees = $this->getListeUrl(@$params['damesCreees']);
+		$this->dameCreee = $this->getListeUrl(@$params['dameCreee']);
 		$this->etat = (isset($params['etat']) && NULL != $params['etat'] ? intval(trim($params['etat'])) : (count($this->joueurs) == 2 ? EN_COURS : ATTENTE_AUTRE_JOUEUR));
 	}
 	
@@ -46,7 +46,7 @@ class Tour
 			if (NULL != $this->deplacementsPionJoue && '' != $this->deplacementsPionJoue && count($this->deplacementsPionJoue) > 0) {
 				$xml .= "\t".'<deplacementsPionJoue>'."\n";
 				foreach($this->deplacementsPionJoue AS $deplacement) {
-					$xml .= "\t\t".'<deplacement positionIn="'.$deplacement[0].'" positionOut="'.$deplacement[1].'" />'."\n";
+					$xml .= "\t\t".'<deplacement position="'.$deplacement.'" />'."\n";
 				}
 				$xml .= "\t".'</deplacementsPionJoue>'."\n";
 			}
@@ -57,12 +57,12 @@ class Tour
 				}
 				$xml .= "\t".'</pionsManges>'."\n";
 			}
-			if (NULL != $this->damesCreees && '' != $this->damesCreees && count($this->damesCreees) > 0) {
-				$xml .= "\t".'<damesCreees>'."\n";
-				foreach($this->damesCreees AS $dame) {
+			if (NULL != $this->dameCreee && '' != $this->dameCreee && count($this->dameCreee) > 0) {
+				$xml .= "\t".'<dameCreee>'."\n";
+				foreach($this->dameCreee AS $dame) {
 					$xml .= "\t\t".'<dame position="'.$dame.'" />'."\n";
 				}
-				$xml .= "\t".'</damesCreees>'."\n";
+				$xml .= "\t".'</dameCreee>'."\n";
 			}
 		$xml .= '</tour>';
 		file_put_contents($fichier, $xml);
@@ -175,8 +175,8 @@ class Tour
 	public function setDeplacementsPionJoue($deplacementsPionJoue) { $this->deplacementsPionJoue = $deplacementsPionJoue; }
 	public function getPionsManges() { return $this->pionsManges; }
 	public function setPionsManges($pionsManges) { $this->pionsManges = $pionsManges; }
-	public function getDamesCreees() { return $this->damesCreees; }
-	public function setDamesCreees($pionsMadamesCreeesnges) { $this->damesCreees = $damesCreees; }
+	public function getDameCreee() { return $this->dameCreee; }
+	public function setDameCreee($pionsMadameCreeenges) { $this->dameCreee = $dameCreee; }
 	public function getEtat() { return $this->etat; }
 	public function setNEtat($etat) { $this->etat = $etat; }
 }

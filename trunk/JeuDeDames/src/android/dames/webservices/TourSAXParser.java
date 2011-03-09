@@ -51,9 +51,8 @@ public class TourSAXParser extends DefaultHandler {
 			}
 			else if(qName.equals("deplacement")){
 				try {
-					int positionIn = Integer.parseInt(attributs.getValue("positionIn"));
-					int positionOut = Integer.parseInt(attributs.getValue("positionOut"));
-					tour.getDeplacementsPionJoue().put(positionIn, positionOut);
+					int position = Integer.parseInt(attributs.getValue("position"));
+					tour.getDeplacementsPionJoue().add(position);
 				} catch(Exception e){
 					throw new SAXException(e);
 				}
@@ -69,7 +68,7 @@ public class TourSAXParser extends DefaultHandler {
 			else if(qName.equals("dame")){
 				try {
 					int position = Integer.parseInt(attributs.getValue("position"));
-					tour.getDamesCreees().add(position);
+					tour.getDameCreee().add(position);
 				} catch(Exception e){
 					throw new SAXException(e);
 				}
