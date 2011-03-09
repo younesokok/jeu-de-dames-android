@@ -190,34 +190,34 @@ public class DamierView extends PlateauView {
 				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
 				// Si on a besoin de modifier
-//				if (tourCourant.getNumero() > numeroAncienTour) {
-//					// Maj des déplacements
-//					int lastDeplacement = -1;
-//					for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
-//						if (lastDeplacement == -1) {
-//							lastDeplacement = deplacement;
-//							continue;
-//						}
-//						int index = 0;
-//						if(mCouleurJoueur == BLANC) {
-//							for (Pion p : mPionsNoir) {
-//								if (p.getNumeroCase() == lastDeplacement) {
-//									mPionsNoir.get(index).setXYParNumeroCase(deplacement);
-//									break;
-//								}
-//								index++;
-//							}
-//						}
-//						if(mCouleurJoueur == NOIR) {
-//							for (Pion p : mPionsBlanc) {
-//								if (p.getNumeroCase() == lastDeplacement) {
-//									mPionsBlanc.get(index).setXYParNumeroCase(deplacement);
-//									break;
-//								}
-//								index++;
-//							}
-//						}
-//					}
+				if (tourCourant.getNumero() > numeroAncienTour) {
+					// Maj des déplacements
+					int lastDeplacement = -1;
+					for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
+						if (lastDeplacement == -1) {
+							lastDeplacement = deplacement;
+							continue;
+						}
+						int index = 0;
+						if(mCouleurJoueur == BLANC) {
+							for (Pion p : mPionsNoir) {
+								if (p.getNumeroCase() == lastDeplacement) {
+									mPionsNoir.get(index).setXYParNumeroCase(deplacement);
+									break;
+								}
+								index++;
+							}
+						}
+						if(mCouleurJoueur == NOIR) {
+							for (Pion p : mPionsBlanc) {
+								if (p.getNumeroCase() == lastDeplacement) {
+									mPionsBlanc.get(index).setXYParNumeroCase(deplacement);
+									break;
+								}
+								index++;
+							}
+						}
+					}
 //					// Maj des pions mangés
 //					for (Integer pionMange : tourCourant.getPionsManges()) {
 //						int index = 0;
@@ -262,7 +262,7 @@ public class DamierView extends PlateauView {
 //							}
 //						}
 //					}
-//				}
+				}
 
 
 				// --- On rend la main au joueur
