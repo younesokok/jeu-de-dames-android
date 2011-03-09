@@ -37,7 +37,7 @@ public class JeuDeDamesActivity extends Activity {
         	}
         	mDamierView.setMode(DamierView.READY);
         }
-     // On restaure le jeu
+        // On restaure le jeu
         else {
         	Log.i(tag, "Quelque chose dans le savedInstanceState");
             Bundle bundle_damier = savedInstanceState.getBundle(mBundleKey);
