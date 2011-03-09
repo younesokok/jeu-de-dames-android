@@ -3,8 +3,8 @@
 define('EN_COURS', 10);
 define('ATTENTE_AUTRE_JOUEUR', 5);
 define('FINI', 6);
-define('BLANC', 1);
-define('NOIR', 0);
+define('BLANC', 0);
+define('NOIR', 1);
 /**
  * Clean une chaine de caractères pour être un pseudo propre
  * @param string $pseudo Chaine de caractères à cleaner
