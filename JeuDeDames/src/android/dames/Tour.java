@@ -13,9 +13,9 @@ public class Tour implements Serializable {
 	private int numero;
 	private int etat;
 	private Map<String, Integer> joueurs;
-	private Map<Integer, Integer> deplacementsPionJoue;
+	private List<Integer> deplacementsPionJoue;
 	private List<Integer> pionsManges;
-	private List<Integer> damesCreees;
+	private List<Integer> dameCreee;
 	
 	/* --- Constructeurs --- */
 	public Tour() {
@@ -23,18 +23,18 @@ public class Tour implements Serializable {
 		numero = 0;
 		etat = DamierView.ATTENTE_AUTRE_JOUEUR;
 		joueurs = new HashMap<String, Integer>();
-		deplacementsPionJoue = new HashMap<Integer, Integer>();
+		deplacementsPionJoue = new ArrayList<Integer>();
 		pionsManges = new ArrayList<Integer>();
-		damesCreees = new ArrayList<Integer>();
+		dameCreee = new ArrayList<Integer>();
 	}
-	public Tour(int idPartie, int numero, int etat, HashMap<String, Integer> joueurs, Map<Integer, Integer> deplacementsPionJoue, List<Integer> pionsManges, List<Integer> damesCreees) {
+	public Tour(int idPartie, int numero, int etat, Map<String, Integer> joueurs, List<Integer> deplacementsPionJoue, List<Integer> pionsManges, List<Integer> dameCreee) {
 		this.idPartie = idPartie;
 		this.numero = numero;
 		this.etat = etat;
 		this.joueurs = joueurs;
 		this.deplacementsPionJoue = deplacementsPionJoue;
 		this.pionsManges = pionsManges;
-		this.damesCreees = damesCreees;
+		this.dameCreee = dameCreee;
 	}
 	
 	/* --- Méthodes --- */
@@ -50,8 +50,8 @@ public class Tour implements Serializable {
 		}
 		sb.append(getStringJoueurs()+"\n");
 		sb.append("Déplacements du pion joué : \n");
-		for (Entry<Integer, Integer> deplacement : deplacementsPionJoue.entrySet()) {
-			sb.append("de la case "+deplacement.getKey()+" à la case "+deplacement.getValue()+"\n");
+		for (Integer deplacement : deplacementsPionJoue) {
+			sb.append("à la case "+deplacement+"\n");
 		}
 		sb.append(getStringDeplacementsPionJoue()+"\n");
 		sb.append("Pions mangés : \n");
@@ -60,10 +60,10 @@ public class Tour implements Serializable {
 		}
 		sb.append(getStringPionsManges()+"\n");
 		sb.append("Dames créées : \n");
-		for (Integer dame : damesCreees) {
+		for (Integer dame : dameCreee) {
 			sb.append("dame à la case "+dame+"\n");
 		}
-		sb.append(getStringDamesCreees()+"\n");
+		sb.append(getStringDameCreee()+"\n");
 		return sb.toString();
 	}
 	
@@ -71,21 +71,21 @@ public class Tour implements Serializable {
 		incrNumero();
 		razDeplacementsPionJoue();
 		razPionsManges();
-		razDamesCreees();
+		razDameCreee();
 	}
 	public void setIdPartie(int idPartie) { this.idPartie = idPartie; }
 	public int getIdPartie() { return idPartie; }
 	public void setNumero(int numero) { this.numero = numero; }
 	public void incrNumero() { this.numero++; }
 	public int getNumero() { return numero; }
-	public void setDeplacementsPionJoue(Map<Integer, Integer> deplacementsPionJoue) { this.deplacementsPionJoue = deplacementsPionJoue; }
+	public void setDeplacementsPionJoue(List<Integer> deplacementsPionJoue) { this.deplacementsPionJoue = deplacementsPionJoue; }
 	public void razDeplacementsPionJoue() { deplacementsPionJoue.clear(); }
-	public Map<Integer, Integer> getDeplacementsPionJoue() { return deplacementsPionJoue; }
+	public List<Integer> getDeplacementsPionJoue() { return deplacementsPionJoue; }
 	public String getStringDeplacementsPionJoue() {
 		StringBuffer sb = new StringBuffer();
 		if (null != deplacementsPionJoue && deplacementsPionJoue.size() > 0) {
-			for (Entry<Integer, Integer> deplacement : deplacementsPionJoue.entrySet()) {
-				sb.append(deplacement.getKey()+":"+deplacement.getValue()+";");
+			for (Integer deplacement : deplacementsPionJoue) {
+				sb.append(deplacement+";");
 			}
 			sb.deleteCharAt(sb.length()-1);
 		}
@@ -104,13 +104,13 @@ public class Tour implements Serializable {
 		}
 		return sb.toString();
 	}
-	public void setDamesCreees(List<Integer> damesCreees) { this.damesCreees = damesCreees; }
-	public void razDamesCreees() { damesCreees.clear(); }
-	public List<Integer> getDamesCreees() { return damesCreees; }
-	public String getStringDamesCreees() {
+	public void setDameCreee(List<Integer> dameCreee) { this.dameCreee = dameCreee; }
+	public void razDameCreee() { dameCreee.clear(); }
+	public List<Integer> getDameCreee() { return dameCreee; }
+	public String getStringDameCreee() {
 		StringBuffer sb = new StringBuffer();
-		if (null != damesCreees && damesCreees.size() > 0) {
-			for (Integer dame : damesCreees) {
+		if (null != dameCreee && dameCreee.size() > 0) {
+			for (Integer dame : dameCreee) {
 				sb.append(dame+";");
 			}
 			sb.deleteCharAt(sb.length()-1);

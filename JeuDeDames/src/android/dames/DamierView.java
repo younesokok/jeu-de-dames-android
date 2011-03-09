@@ -190,12 +190,17 @@ public class DamierView extends PlateauView {
 				// Si on a besoin de modifier
 				if (tourCourant.getNumero() > numeroAncienTour) {
 					// Maj des déplacements
-					for (Entry<Integer, Integer> deplacement : tourCourant.getDeplacementsPionJoue().entrySet()) {
+					int lastDeplacement = -1;
+					for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
+						if (lastDeplacement == -1) {
+							lastDeplacement = deplacement;
+							continue;
+						}
 						int index = 0;
 						if(mCouleurJoueur == BLANC) {
 							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == deplacement.getKey()) {
-									mPionsNoir.get(index).setXYParNumeroCase(deplacement.getValue());
+								if (p.getNumeroCase() == lastDeplacement) {
+									mPionsNoir.get(index).setXYParNumeroCase(deplacement);
 									break;
 								}
 								index++;
@@ -203,8 +208,8 @@ public class DamierView extends PlateauView {
 						}
 						if(mCouleurJoueur == NOIR) {
 							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == deplacement.getKey()) {
-									mPionsBlanc.get(index).setXYParNumeroCase(deplacement.getValue());
+								if (p.getNumeroCase() == lastDeplacement) {
+									mPionsBlanc.get(index).setXYParNumeroCase(deplacement);
 									break;
 								}
 								index++;
@@ -234,7 +239,7 @@ public class DamierView extends PlateauView {
 						}
 					}
 					// Maj des dames
-					for (Integer dameCreee : tourCourant.getDamesCreees()) {
+					for (Integer dameCreee : tourCourant.getDameCreee()) {
 						int index = 0;
 						if(mCouleurJoueur == BLANC) {
 							for (Pion p : mPionsNoir) {
@@ -381,6 +386,7 @@ public class DamierView extends PlateauView {
 				// Preparation pour l'envoi au serveur
 				tourCourant.preparerProchainTour();
 				// On enleve les pions/dames pris
+				// On en profite pour enregistrer les déplacements au tourCourant
 				Pion lastDeplacement = null;
 				for (Pion deplacement : mDeplacements) {
 					if (lastDeplacement == null) {
@@ -412,6 +418,9 @@ public class DamierView extends PlateauView {
 							index++;
 						}
 					}
+					// On ajoute le déplacement précédent au tourCourant (ce qui évite d'avoir le dernier déplacement qui est redondant)
+					tourCourant.getDeplacementsPionJoue().add(lastDeplacement.getNumeroCase());
+					// On incrémente le déplacement précédent
 					lastDeplacement = deplacement;
 				}
 				// On transforme les pions en dames
@@ -422,7 +431,7 @@ public class DamierView extends PlateauView {
 						if(p.equalsPosition(pCourant)) {
 							Pion nouvelleDame = new Pion(p.getX(),p.getY(),DAME_BLANC);
 							mPionsBlanc.set(index, nouvelleDame);
-							tourCourant.getDamesCreees().add(nouvelleDame.getNumeroCase());
+							tourCourant.getDameCreee().add(nouvelleDame.getNumeroCase());
 							break;
 						}
 						index++;
@@ -433,7 +442,7 @@ public class DamierView extends PlateauView {
 						if(p.equalsPosition(pCourant)) {
 							Pion nouvelleDame = new Pion(p.getX(),p.getY(),DAME_NOIR);
 							mPionsNoir.set(index, nouvelleDame);
-							tourCourant.getDamesCreees().add(nouvelleDame.getNumeroCase());
+							tourCourant.getDameCreee().add(nouvelleDame.getNumeroCase());
 							break;
 						}
 						index++;
@@ -441,20 +450,6 @@ public class DamierView extends PlateauView {
 				}
 
 				// --- Envoi au serveur
-				// Ajout des déplacements du pion
-				// Note : DeplacementsPionJoue prend en paramètre : positionInitiale -> positionSuivante, ..., positionIntermediaire -> positionFinale 
-				int lastCase = -1;
-				// TODO : à vérifer carrément !
-				List<Pion> mDeplacementsInverse = mDeplacements;
-				Collections.reverse(mDeplacementsInverse);
-				for (Pion pion : mDeplacementsInverse) {
-					if (lastCase == -1) {
-						lastCase = pion.getNumeroCase();
-						continue;
-					}
-					tourCourant.getDeplacementsPionJoue().put(lastCase, pion.getNumeroCase());
-					lastCase = pion.getNumeroCase();
-				}
 				communicationServeur.sendTourFini(tourCourant);
 
 				// --- Remise en attente

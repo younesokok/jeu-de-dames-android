@@ -123,7 +123,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 		params.put("joueurs", tour.getStringJoueurs());
 		params.put("deplacementsPionJoue", tour.getStringDeplacementsPionJoue());
 		params.put("pionsManges", tour.getStringPionsManges());
-		params.put("damesCreees", tour.getStringDamesCreees());
+		params.put("damesCreees", tour.getStringDameCreee());
 		URL url = buildUrl(this.url, params);
 		Log.i(tag, url.toString());
 		Tour tourCourant = parserXmlTour(url);
