@@ -168,6 +168,7 @@ public class DamierView extends PlateauView {
 			switch(mEtat){
 			// --- Attente qu'un adversaire rejoigne la partie
 			case(ATTENTE_AUTRE_JOUEUR): {
+				Log.i(tag, "Mode ATTENTE_AUTRE_JOUEUR ("+mCouleurJoueur+")");
 				Toast.makeText(getContext(), "Veuillez patienter en attendant\n l'arrivée de votre adversaire !", Toast.LENGTH_LONG).show();
 				// --- Récupération des informations du serveur
 				tourCourant = communicationServeur.attendreAutreJoueur(tourCourant);
@@ -178,6 +179,7 @@ public class DamierView extends PlateauView {
 				break;	
 			}
 			case(ATTENTE_TOUR_AUTRE_JOUEUR):{
+				Log.i(tag, "Mode ATTENTE_TOUR_AUTRE_JOUEUR ("+mCouleurJoueur+")");
 				// Gestion des règles lors de l'attente - quand ce n'est pas le tour du joueur
 				Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG).show();
 
@@ -188,79 +190,79 @@ public class DamierView extends PlateauView {
 				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
 				// Si on a besoin de modifier
-				if (tourCourant.getNumero() > numeroAncienTour) {
-					// Maj des déplacements
-					int lastDeplacement = -1;
-					for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
-						if (lastDeplacement == -1) {
-							lastDeplacement = deplacement;
-							continue;
-						}
-						int index = 0;
-						if(mCouleurJoueur == BLANC) {
-							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == lastDeplacement) {
-									mPionsNoir.get(index).setXYParNumeroCase(deplacement);
-									break;
-								}
-								index++;
-							}
-						}
-						if(mCouleurJoueur == NOIR) {
-							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == lastDeplacement) {
-									mPionsBlanc.get(index).setXYParNumeroCase(deplacement);
-									break;
-								}
-								index++;
-							}
-						}
-					}
-					// Maj des pions mangés
-					for (Integer pionMange : tourCourant.getPionsManges()) {
-						int index = 0;
-						if(mCouleurJoueur == BLANC) {
-							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == pionMange) {
-									mPionsNoir.remove(index);
-									break;
-								}
-								index++;
-							}
-						}
-						if(mCouleurJoueur == NOIR) {
-							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == pionMange) {
-									mPionsBlanc.remove(index);
-									break;
-								}
-								index++;
-							}
-						}
-					}
-					// Maj des dames
-					for (Integer dameCreee : tourCourant.getDameCreee()) {
-						int index = 0;
-						if(mCouleurJoueur == BLANC) {
-							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == dameCreee) {
-									mPionsNoir.get(index).setType(DAME_NOIR);
-									break;
-								}
-								index++;
-							}
-						}
-						if(mCouleurJoueur == NOIR) {
-							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == dameCreee) {
-									mPionsBlanc.get(index).setType(DAME_BLANC);
-									break;
-								}
-								index++;
-							}
-						}
-					}
-				}
+//				if (tourCourant.getNumero() > numeroAncienTour) {
+//					// Maj des déplacements
+//					int lastDeplacement = -1;
+//					for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
+//						if (lastDeplacement == -1) {
+//							lastDeplacement = deplacement;
+//							continue;
+//						}
+//						int index = 0;
+//						if(mCouleurJoueur == BLANC) {
+//							for (Pion p : mPionsNoir) {
+//								if (p.getNumeroCase() == lastDeplacement) {
+//									mPionsNoir.get(index).setXYParNumeroCase(deplacement);
+//									break;
+//								}
+//								index++;
+//							}
+//						}
+//						if(mCouleurJoueur == NOIR) {
+//							for (Pion p : mPionsBlanc) {
+//								if (p.getNumeroCase() == lastDeplacement) {
+//									mPionsBlanc.get(index).setXYParNumeroCase(deplacement);
+//									break;
+//								}
+//								index++;
+//							}
+//						}
+//					}
+//					// Maj des pions mangés
+//					for (Integer pionMange : tourCourant.getPionsManges()) {
+//						int index = 0;
+//						if(mCouleurJoueur == BLANC) {
+//							for (Pion p : mPionsNoir) {
+//								if (p.getNumeroCase() == pionMange) {
+//									mPionsNoir.remove(index);
+//									break;
+//								}
+//								index++;
+//							}
+//						}
+//						if(mCouleurJoueur == NOIR) {
+//							for (Pion p : mPionsBlanc) {
+//								if (p.getNumeroCase() == pionMange) {
+//									mPionsBlanc.remove(index);
+//									break;
+//								}
+//								index++;
+//							}
+//						}
+//					}
+//					// Maj des dames
+//					for (Integer dameCreee : tourCourant.getDameCreee()) {
+//						int index = 0;
+//						if(mCouleurJoueur == BLANC) {
+//							for (Pion p : mPionsNoir) {
+//								if (p.getNumeroCase() == dameCreee) {
+//									mPionsNoir.get(index).setType(DAME_NOIR);
+//									break;
+//								}
+//								index++;
+//							}
+//						}
+//						if(mCouleurJoueur == NOIR) {
+//							for (Pion p : mPionsBlanc) {
+//								if (p.getNumeroCase() == dameCreee) {
+//									mPionsBlanc.get(index).setType(DAME_BLANC);
+//									break;
+//								}
+//								index++;
+//							}
+//						}
+//					}
+//				}
 
 
 				// --- On rend la main au joueur
@@ -624,6 +626,7 @@ public class DamierView extends PlateauView {
 				initNewGame();
 				setMode(RUNNING);
 				updateView();
+				updateGame();
 				return (true);
 			}
 			if (mMode == PAUSE) {
