@@ -296,32 +296,34 @@ public class DamierView extends PlateauView {
 			case(PLAY):{
 
 				List<Pion> mMesPions ;
-				List<Pion> mPionsAdvserve ;
+				List<Pion> mPionsAdvserves ;
 				List<Pion> mTousLesPions = new ArrayList<Pion>();
 
 				/* Gestion des règles lors du déplacement d'un pion */
 				if(mCouleurJoueur==BLANC) {
 					mMesPions = mPionsBlanc ;
-					mPionsAdvserve = mPionsNoir ;
+					mPionsAdvserves = mPionsNoir ;
 				} else {
 					mMesPions = mPionsNoir;
-					mPionsAdvserve = mPionsBlanc  ;
+					mPionsAdvserves = mPionsBlanc  ;
 				} 
 				mTousLesPions.addAll(mPionsBlanc);
 				mTousLesPions.addAll(mPionsNoir);
 				/* Si on repose le pion, on peut en choisir un autre */
-				if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
+				Pion positionCourante = mDeplacements.get(mDeplacements.size()-1);
+				Pion positionPrecedente = mDeplacements.get(mDeplacements.size()-2);
+				if(positionCourante.equalsPosition(positionPrecedente)) {
 					mDeplacements.remove(mDeplacements.size()-1);
 					setEtat(SELECT);
 				}
 				/* On vérifie déjà que le déplacement est diagonal */
-				else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
+				else if(positionCourante.equalsDiag(positionPrecedente)){
 					/* On gere le cas d'un déplacement de 1 en diagonal */
-					if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
+					if(positionCourante.getDistance(positionPrecedente) == 1 || Pion.is1PionPar1Pion(positionCourante, positionPrecedente, mPionsAdvserves)) {
 						/* On verifie si aucun pion de mes pions ou un de mon adversaire n'est présent sur cette case */
 						int index = 0;
 						for (Pion p : mTousLesPions) {
-							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+							if(p.equalsPosition(positionCourante)){
 								/* Sinon on quitte */
 								updateView();
 								return(true);
@@ -332,14 +334,14 @@ public class DamierView extends PlateauView {
 						// On modifie l'emplacement du pion de l'index précédent
 						index = 0;
 						for (Pion p : mMesPions) {
-							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-2))){
-								mMesPions.set(index, mDeplacements.get(mDeplacements.size()-1));
+							if(p.equalsPosition(positionPrecedente)){
+								mMesPions.set(index, positionCourante);
 								break;
 							}
 							index++;
 						}
 						// On permet de continuer le déplacement
-						mDeplacements.add(mDeplacements.get(mDeplacements.size()-1));
+						mDeplacements.add(positionCourante);
 						toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
 						toast.show();
 						setEtat(AFFICHE);
