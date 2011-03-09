@@ -95,7 +95,7 @@ public class DamierView extends PlateauView {
 	public static final int NOIR = 1;
 	private static final int OBSERVATEUR = 2;
 	private Tour tourCourant;
-	
+
 	/**
 	 * Texte a afficher
 	 */
@@ -171,7 +171,7 @@ public class DamierView extends PlateauView {
 				Toast.makeText(getContext(), "Veuillez patienter en attendant\n l'arrivée de votre adversaire !", Toast.LENGTH_LONG).show();
 				// --- Récupération des informations du serveur
 				tourCourant = communicationServeur.attendreAutreJoueur(tourCourant);
-				
+
 				// --- Adversaire arrivée : on rend la main au joueur
 				Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
 				setEtat(SELECT);
@@ -184,7 +184,7 @@ public class DamierView extends PlateauView {
 				// --- Récupération des informations du serveur
 				int numeroAncienTour = tourCourant.getNumero();
 				tourCourant = communicationServeur.attendreNouveauTour(tourCourant);
-				
+
 				// --- Maj du jeu en conséquence
 				mDeplacements.clear();
 				// Si on a besoin de modifier
@@ -256,8 +256,8 @@ public class DamierView extends PlateauView {
 						}
 					}
 				}
-				
-				
+
+
 				// --- On rend la main au joueur
 				Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
 				setEtat(SELECT);
@@ -288,56 +288,64 @@ public class DamierView extends PlateauView {
 
 			case(PLAY):{
 
+				ArrayList<Pion> mPions ;
+				ArrayList<Pion> mPionsAdvserve ;
+
 				/* Gestion des règles lors du déplacement d'un pion */
 				if(mCouleurJoueur==BLANC) {
-					/* Si on repose le pion, on peut en choisir un autre */
-					if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
-						mDeplacements.remove(mDeplacements.size()-1);
-						setEtat(SELECT);
-					}
-					/* On vérifie déjà que le déplacement est diagonal */
-					else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
-						/* On gere le cas d'un déplacement de 1 en diagonal */
-						if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
-							/* On verifie si aucun pion blanc n'est présent sur cette case */
-							int index = 0;
-							for (Pion p : mPionsBlanc) {
-								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-									/* Sinon on quitte */
-									updateView();
-									return(true);
-								}
-								index++;
+					mPions = mPionsBlanc ;
+					mPionsAdvserve = mPionsNoir ;
+				} else {
+					mPions = mPionsNoir;
+					mPionsAdvserve = mPionsBlanc  ;
+				} 
+				/* Si on repose le pion, on peut en choisir un autre */
+				if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
+					mDeplacements.remove(mDeplacements.size()-1);
+					setEtat(SELECT);
+				}
+				/* On vérifie déjà que le déplacement est diagonal */
+				else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
+					/* On gere le cas d'un déplacement de 1 en diagonal */
+					if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
+						/* On verifie si aucun pion de mes pions n'est présent sur cette case */
+						int index = 0;
+						for (Pion p : mPions) {
+							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+								/* Sinon on quitte */
+								updateView();
+								return(true);
 							}
-							/* On verifie si aucun pion noir n'est présent sur cette case */
-							index = 0;
-							for (Pion p : mPionsNoir) {
-								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-									/* Sinon on quitte */
-									updateView();
-									return(true);
-								}
-								index++;
+							index++;
+						}
+						/* On verifie si aucun pion adverse n'est présent sur cette case */
+						index = 0;
+						for (Pion p : mPionsAdvserve) {
+							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
+								/* Sinon on quitte */
+								updateView();
+								return(true);
 							}
-							/* Si on arrive ici c'est que la case est vide */
-							// On modifie l'emplacement du pion de l'index précédent
-							index = 0;
-							for (Pion p : mPionsBlanc) {
-								if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-2))){
-									mPionsBlanc.set(index, mDeplacements.get(mDeplacements.size()-1));
-									break;
-								}
-								index++;
+							index++;
+						}
+						/* Si on arrive ici c'est que la case est vide */
+						// On modifie l'emplacement du pion de l'index précédent
+						index = 0;
+						for (Pion p : mPions) {
+							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-2))){
+								mPions.set(index, mDeplacements.get(mDeplacements.size()-1));
+								break;
 							}
-							// On permet de continuer le déplacement
-//							mDeplacements.add(new Pion(mDeplacements.get(mDeplacements.size()-1).getX(),mDeplacements.get(mDeplacements.size()-1).getY()));
-							mDeplacements.add(mDeplacements.get(mDeplacements.size()-1));
-							toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
-							toast.show();
-							setEtat(AFFICHE);
-							updateGame();
-						}	
-					}
+							index++;
+						}
+						// On permet de continuer le déplacement
+						//							mDeplacements.add(new Pion(mDeplacements.get(mDeplacements.size()-1).getX(),mDeplacements.get(mDeplacements.size()-1).getY()));
+						mDeplacements.add(mDeplacements.get(mDeplacements.size()-1));
+						toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
+						toast.show();
+						setEtat(AFFICHE);
+						updateGame();
+					}	
 					updateView();
 					return(true);
 				}
@@ -368,7 +376,7 @@ public class DamierView extends PlateauView {
 					setEtat(mEtatPrecedent);
 					return(true);
 				}	
-				
+
 				// --- Gestion des règles une fois tous les déplacements terminés
 				// Preparation pour l'envoi au serveur
 				tourCourant.preparerProchainTour();
@@ -431,7 +439,7 @@ public class DamierView extends PlateauView {
 						index++;
 					}
 				}
-				
+
 				// --- Envoi au serveur
 				// Ajout des déplacements du pion
 				// Note : DeplacementsPionJoue prend en paramètre : positionInitiale -> positionSuivante, ..., positionIntermediaire -> positionFinale 
@@ -448,7 +456,7 @@ public class DamierView extends PlateauView {
 					lastCase = pion.getNumeroCase();
 				}
 				communicationServeur.sendTourFini(tourCourant);
-				
+
 				// --- Remise en attente
 				setEtat(ATTENTE_TOUR_AUTRE_JOUEUR);
 				updateGame();
