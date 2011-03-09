@@ -54,10 +54,7 @@ public class Pion {
 	}
 	
 	public boolean equalsDiag(Pion aTester) {
-		if (Math.abs(x-aTester.x) == Math.abs(y-aTester.y)) {
-			return true;
-		}
-		return false;
+		return (Math.abs(x-aTester.x) == Math.abs(y-aTester.y));
 	}
 	
 	public boolean entre2Pions(Pion pion1, Pion pion2) {

@@ -218,50 +218,50 @@ public class DamierView extends PlateauView {
 							}
 						}
 					}
-//					// Maj des pions mangés
-//					for (Integer pionMange : tourCourant.getPionsManges()) {
-//						int index = 0;
-//						if(mCouleurJoueur == BLANC) {
-//							for (Pion p : mPionsNoir) {
-//								if (p.getNumeroCase() == pionMange) {
-//									mPionsNoir.remove(index);
-//									break;
-//								}
-//								index++;
-//							}
-//						}
-//						if(mCouleurJoueur == NOIR) {
-//							for (Pion p : mPionsBlanc) {
-//								if (p.getNumeroCase() == pionMange) {
-//									mPionsBlanc.remove(index);
-//									break;
-//								}
-//								index++;
-//							}
-//						}
-//					}
-//					// Maj des dames
-//					for (Integer dameCreee : tourCourant.getDameCreee()) {
-//						int index = 0;
-//						if(mCouleurJoueur == BLANC) {
-//							for (Pion p : mPionsNoir) {
-//								if (p.getNumeroCase() == dameCreee) {
-//									mPionsNoir.get(index).setType(DAME_NOIR);
-//									break;
-//								}
-//								index++;
-//							}
-//						}
-//						if(mCouleurJoueur == NOIR) {
-//							for (Pion p : mPionsBlanc) {
-//								if (p.getNumeroCase() == dameCreee) {
-//									mPionsBlanc.get(index).setType(DAME_BLANC);
-//									break;
-//								}
-//								index++;
-//							}
-//						}
-//					}
+					// Maj des pions mangés
+					for (Integer pionMange : tourCourant.getPionsManges()) {
+						int index = 0;
+						if(mCouleurJoueur == BLANC) {
+							for (Pion p : mPionsNoir) {
+								if (p.getNumeroCase() == pionMange) {
+									mPionsNoir.remove(index);
+									break;
+								}
+								index++;
+							}
+						}
+						if(mCouleurJoueur == NOIR) {
+							for (Pion p : mPionsBlanc) {
+								if (p.getNumeroCase() == pionMange) {
+									mPionsBlanc.remove(index);
+									break;
+								}
+								index++;
+							}
+						}
+					}
+					// Maj des dames
+					for (Integer dameCreee : tourCourant.getDameCreee()) {
+						int index = 0;
+						if(mCouleurJoueur == BLANC) {
+							for (Pion p : mPionsNoir) {
+								if (p.getNumeroCase() == dameCreee) {
+									mPionsNoir.get(index).setType(DAME_NOIR);
+									break;
+								}
+								index++;
+							}
+						}
+						if(mCouleurJoueur == NOIR) {
+							for (Pion p : mPionsBlanc) {
+								if (p.getNumeroCase() == dameCreee) {
+									mPionsBlanc.get(index).setType(DAME_BLANC);
+									break;
+								}
+								index++;
+							}
+						}
+					}
 				}
 
 
@@ -295,17 +295,20 @@ public class DamierView extends PlateauView {
 
 			case(PLAY):{
 
-				ArrayList<Pion> mPions ;
-				ArrayList<Pion> mPionsAdvserve ;
+				List<Pion> mMesPions ;
+				List<Pion> mPionsAdvserve ;
+				List<Pion> mTousLesPions = new ArrayList<Pion>();
 
 				/* Gestion des règles lors du déplacement d'un pion */
 				if(mCouleurJoueur==BLANC) {
-					mPions = mPionsBlanc ;
+					mMesPions = mPionsBlanc ;
 					mPionsAdvserve = mPionsNoir ;
 				} else {
-					mPions = mPionsNoir;
+					mMesPions = mPionsNoir;
 					mPionsAdvserve = mPionsBlanc  ;
 				} 
+				mTousLesPions.addAll(mPionsBlanc);
+				mTousLesPions.addAll(mPionsNoir);
 				/* Si on repose le pion, on peut en choisir un autre */
 				if(mDeplacements.get(mDeplacements.size()-1).equalsPosition(mDeplacements.get(mDeplacements.size()-2))) {
 					mDeplacements.remove(mDeplacements.size()-1);
@@ -315,19 +318,9 @@ public class DamierView extends PlateauView {
 				else if(mDeplacements.get(mDeplacements.size()-1).equalsDiag(mDeplacements.get(mDeplacements.size()-2))){
 					/* On gere le cas d'un déplacement de 1 en diagonal */
 					if(mDeplacements.get(mDeplacements.size()-1).getDistance(mDeplacements.get(mDeplacements.size()-2))==1) {
-						/* On verifie si aucun pion de mes pions n'est présent sur cette case */
+						/* On verifie si aucun pion de mes pions ou un de mon adversaire n'est présent sur cette case */
 						int index = 0;
-						for (Pion p : mPions) {
-							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
-								/* Sinon on quitte */
-								updateView();
-								return(true);
-							}
-							index++;
-						}
-						/* On verifie si aucun pion adverse n'est présent sur cette case */
-						index = 0;
-						for (Pion p : mPionsAdvserve) {
+						for (Pion p : mTousLesPions) {
 							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-1))){
 								/* Sinon on quitte */
 								updateView();
@@ -338,15 +331,14 @@ public class DamierView extends PlateauView {
 						/* Si on arrive ici c'est que la case est vide */
 						// On modifie l'emplacement du pion de l'index précédent
 						index = 0;
-						for (Pion p : mPions) {
+						for (Pion p : mMesPions) {
 							if(p.equalsPosition(mDeplacements.get(mDeplacements.size()-2))){
-								mPions.set(index, mDeplacements.get(mDeplacements.size()-1));
+								mMesPions.set(index, mDeplacements.get(mDeplacements.size()-1));
 								break;
 							}
 							index++;
 						}
 						// On permet de continuer le déplacement
-						//							mDeplacements.add(new Pion(mDeplacements.get(mDeplacements.size()-1).getX(),mDeplacements.get(mDeplacements.size()-1).getY()));
 						mDeplacements.add(mDeplacements.get(mDeplacements.size()-1));
 						toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
 						toast.show();
