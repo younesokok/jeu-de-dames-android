@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,27 +58,29 @@ public class DamierView extends PlateauView {
 	/**
 	 * On definit les différents types de cases
 	 */
-	private static final int PION_INDEFINI = 0; /* Pointeur de selection */
-	private static final int CASE_BLANC = 1;
-	private static final int CASE_NOIR = 2;
-	private static final int PION_BLANC = 3;
-	private static final int PION_NOIR = 4;
-	private static final int DAME_NOIR = 5;
-	private static final int DAME_BLANC = 6;
-	private static final int CASE_BLANC_SELECTED = 7;
-	private static final int CASE_NOIR_SELECTED = 8;
-	private static final int PION_BLANC_SELECTED = 9;
-	private static final int PION_NOIR_SELECTED = 10;
-	private static final int DAME_NOIR_SELECTED = 11;
-	private static final int DAME_BLANC_SELECTED = 12;
+	// THOMAS : changé en public pour test thread
+	public static final int PION_INDEFINI = 0; /* Pointeur de selection */
+	public static final int CASE_BLANC = 1;
+	public static final int CASE_NOIR = 2;
+	public static final int PION_BLANC = 3;
+	public static final int PION_NOIR = 4;
+	public static final int DAME_NOIR = 5;
+	public static final int DAME_BLANC = 6;
+	public static final int CASE_BLANC_SELECTED = 7;
+	public static final int CASE_NOIR_SELECTED = 8;
+	public static final int PION_BLANC_SELECTED = 9;
+	public static final int PION_NOIR_SELECTED = 10;
+	public static final int DAME_NOIR_SELECTED = 11;
+	public static final int DAME_BLANC_SELECTED = 12;
 
 	/**
 	 * mPionsXXXX : liste des coordonnes des Pions de couleur XXXX
 	 * mDamesXXXX : liste des coordonnes des Dames de couleur XXXX
 	 */
-	private ArrayList<Pion> mPionsNoir = new ArrayList<Pion>();
-	private ArrayList<Pion> mPionsBlanc = new ArrayList<Pion>();
-	private ArrayList<Pion> mDeplacements = new ArrayList<Pion>();
+	// THOMAS : changement pour test de thread de private en public
+	public ArrayList<Pion> mPionsNoir = new ArrayList<Pion>();
+	public ArrayList<Pion> mPionsBlanc = new ArrayList<Pion>();
+	public ArrayList<Pion> mDeplacements = new ArrayList<Pion>();
 
 	/**
 	 * Scores des joueurs
@@ -88,11 +91,13 @@ public class DamierView extends PlateauView {
 	/**
 	 * Info sur le joueur courrent
 	 */
-	private int mCouleurJoueur;
+	// THOMAS : changement en public pour test thread
+	public int mCouleurJoueur;
 	public static final int BLANC = 0;
 	public static final int NOIR = 1;
 	private static final int OBSERVATEUR = 2;
-	private Tour tourCourant;
+	// THOMAS : en public pour tests thread
+	public Tour tourCourant;
 
 	/**
 	 * Texte a afficher
@@ -169,11 +174,13 @@ public class DamierView extends PlateauView {
 				Log.i(tag, "Mode ATTENTE_AUTRE_JOUEUR ("+mCouleurJoueur+")");
 				Toast.makeText(getContext(), "Veuillez patienter en attendant\n l'arrivée de votre adversaire !", Toast.LENGTH_LONG).show();
 				// --- Récupération des informations du serveur
-				tourCourant = communicationServeur.attendreAutreJoueur(tourCourant);
-
-				// --- Adversaire arrivée : on rend la main au joueur
-				Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
-				setEtat(SELECT);
+				// THOMAS : A mon avis il faut creer la methode ICI !!! et qu'elle fasse des updateView (ou invalidate) periodiquement
+				// Encore mieux : Créer un thread qui ne fasse qu'attendre et qui set l'Etat qui c'est ok.
+				// --> fait
+				Thread attente = new ThreadAttenteJoueur(this);
+				attente.start();
+				// THOMAS : Pourquoi pas d'updateView ici ? 
+				updateView();
 				break;	
 			}
 			case(ATTENTE_TOUR_AUTRE_JOUEUR):{
@@ -182,90 +189,11 @@ public class DamierView extends PlateauView {
 				Toast.makeText(getContext(), "Veuillez patienter pendant que\nvotre adversaire joue !", Toast.LENGTH_LONG).show();
 
 				// --- Récupération des informations du serveur
-				int numeroAncienTour = tourCourant.getNumero();
-				tourCourant = communicationServeur.attendreNouveauTour(tourCourant);
-
-				// --- Maj du jeu en conséquence
-				mDeplacements.clear();
-				// Si on a besoin de modifier
-				if (tourCourant.getNumero() > numeroAncienTour) {
-					// Maj des déplacements
-					int lastDeplacement = -1;
-					for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
-						if (lastDeplacement == -1) {
-							lastDeplacement = deplacement;
-							continue;
-						}
-						int index = 0;
-						if(mCouleurJoueur == BLANC) {
-							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == lastDeplacement) {
-									mPionsNoir.get(index).setXYParNumeroCase(deplacement);
-									break;
-								}
-								index++;
-							}
-						}
-						if(mCouleurJoueur == NOIR) {
-							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == lastDeplacement) {
-									mPionsBlanc.get(index).setXYParNumeroCase(deplacement);
-									break;
-								}
-								index++;
-							}
-						}
-					}
-					// Maj des pions mangés
-					for (Integer pionMange : tourCourant.getPionsManges()) {
-						int index = 0;
-						if(mCouleurJoueur == BLANC) {
-							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == pionMange) {
-									mPionsNoir.remove(index);
-									break;
-								}
-								index++;
-							}
-						}
-						if(mCouleurJoueur == NOIR) {
-							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == pionMange) {
-									mPionsBlanc.remove(index);
-									break;
-								}
-								index++;
-							}
-						}
-					}
-					// Maj des dames
-					for (Integer dameCreee : tourCourant.getDameCreee()) {
-						int index = 0;
-						if(mCouleurJoueur == BLANC) {
-							for (Pion p : mPionsNoir) {
-								if (p.getNumeroCase() == dameCreee) {
-									mPionsNoir.get(index).setType(DAME_NOIR);
-									break;
-								}
-								index++;
-							}
-						}
-						if(mCouleurJoueur == NOIR) {
-							for (Pion p : mPionsBlanc) {
-								if (p.getNumeroCase() == dameCreee) {
-									mPionsBlanc.get(index).setType(DAME_BLANC);
-									break;
-								}
-								index++;
-							}
-						}
-					}
-				}
-
-
-				// --- On rend la main au joueur
-				Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
-				setEtat(SELECT);
+				// THOMAS : Idem, une thread pour éviter les pb d'attente
+				// 
+				Thread attente = new ThreadAttenteTour(this);
+				attente.start();
+				
 				updateView();
 				break;	
 			}
@@ -455,8 +383,10 @@ public class DamierView extends PlateauView {
 //					tourCourant.getDeplacementsPionJoue().add(pion.getNumeroCase());
 //				}
 
+				/*
 				// --- Envoi au serveur
 				communicationServeur.sendTourFini(tourCourant);
+*/
 
 				// --- Remise en attente
 				setEtat(ATTENTE_TOUR_AUTRE_JOUEUR);
@@ -690,7 +620,18 @@ public class DamierView extends PlateauView {
 		return super.onKeyDown(keyCode, msg);
 	}
 
-
+	
+	// TODO : Gérer le tactile
+	/* pour gérer le 100% tactile...
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		float x = event.getX();
+		float y = event.getY();
+		this.onKeyDown(KeyEvent.KEYCODE_DPAD_UP, null);
+		Toast.makeText(getContext(), "X : "+x+" - Y : "+y, Toast.LENGTH_LONG).show();
+		return super.onTouchEvent(event);
+	}
+	*/
 
 	// ----------------------- Methodes annexes -------------------- //
 
@@ -741,6 +682,4 @@ public class DamierView extends PlateauView {
 	public Tour getTourCourant() {
 		return tourCourant;
 	}
-
-
 }

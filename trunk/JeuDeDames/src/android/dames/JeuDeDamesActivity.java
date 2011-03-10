@@ -82,12 +82,10 @@ public class JeuDeDamesActivity extends Activity {
     		mDamierView.setEtat(mDamierView.VALID);
     		mDamierView.updateGame();
     	}
-    	/*
     	if(item.getTitle()=="Simul retour attente") {
     		mDamierView.setEtat(mDamierView.SELECT);
     		mDamierView.updateGame();
     	}
-    	*/
     	return super.onOptionsItemSelected(item);
     }
 }
