@@ -395,6 +395,7 @@ public class DamierView extends PlateauView {
 								tourCourant.getPionsManges().add(pion.getNumeroCase());
 								// On le retire de la liste des pions
 								mPionsNoir.remove(index);
+								break;
 							}
 							index++;
 						}
@@ -407,6 +408,7 @@ public class DamierView extends PlateauView {
 								tourCourant.getPionsManges().add(pion.getNumeroCase());
 								// On le retire de la liste des pions
 								mPionsBlanc.remove(index);
+								break;
 							}
 							index++;
 						}
