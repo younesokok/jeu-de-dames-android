@@ -383,10 +383,9 @@ public class DamierView extends PlateauView {
 //					tourCourant.getDeplacementsPionJoue().add(pion.getNumeroCase());
 //				}
 
-				/*
+				
 				// --- Envoi au serveur
 				communicationServeur.sendTourFini(tourCourant);
-*/
 
 				// --- Remise en attente
 				setEtat(ATTENTE_TOUR_AUTRE_JOUEUR);
