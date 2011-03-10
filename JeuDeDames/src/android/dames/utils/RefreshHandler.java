@@ -10,6 +10,6 @@ import android.os.Handler;
 public class RefreshHandler extends Handler {
     public void sleep(long attenteEnSecondes) {
     	this.removeMessages(0);
-        sendMessageDelayed(obtainMessage(0), attenteEnSecondes*1000);
+        sendMessageDelayed(obtainMessage(0), attenteEnSecondes*10000);
     }
 }
