@@ -125,8 +125,6 @@ public class DamierView extends PlateauView {
 	// ----------------------- Modèle -------------------- //
 
 	private void initNewGame() {
-		Log.i(tag, "InitNewGame");
-		mStatusText.setVisibility(INVISIBLE);
 		/* On vide les listes de pions et dames */
 		mPionsNoir.clear();
 		mPionsBlanc.clear();
@@ -627,15 +625,14 @@ public class DamierView extends PlateauView {
 				 * Au debut ou en fin de partie on relance le jeu
 				 */
 				initNewGame();
+				// On met en mode running : on enlève le texte et on met à jour le damier
 				setMode(RUNNING);
-				updateView();
 			}
 			else if (mMode == PAUSE) {
 				/*
 				 * On continue apres la pause
 				 */
 				setMode(RUNNING);
-				updateView();
 			}
 			// Si jamais on est dans le mode RUNNING
 			else if(mMode==RUNNING) {
@@ -682,10 +679,10 @@ public class DamierView extends PlateauView {
 			}
 		}
 
-//		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
-//			updateGame();
-//			return true;
-//		}
+		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+			updateGame();
+			return true;
+		}
 		updateGame();
 		return super.onKeyDown(keyCode, msg);
 	}
