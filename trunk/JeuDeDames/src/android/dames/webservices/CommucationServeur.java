@@ -68,7 +68,13 @@ public class CommucationServeur implements CommucationServeurInterface {
 		while (tourCourantServeur.getEtat() != DamierView.EN_COURS && compteurAttente < nbAttenteMax) {
 			Log.i(tag, tourCourantServeur.toString());
 			// Attente de attente secondes
-			mRefreshHandler.sleep(attenteEnSecondes);
+//			mRefreshHandler.sleep(attenteEnSecondes);
+			try {
+				Thread.sleep(attenteEnSecondes*1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// Récupérations des informations du serveur
 			tourCourantServeur = getTourCourant(ancienTour);
 			compteurAttente++;
@@ -99,7 +105,13 @@ public class CommucationServeur implements CommucationServeurInterface {
 		while (tourCourantServeur.getNumero() <= ancienTour.getNumero() && compteurAttente < nbAttenteMax) {
 			Log.i(tag, tourCourantServeur.toString());
 			// Attente de attente secondes
-			mRefreshHandler.sleep(attenteEnSecondes);
+//			mRefreshHandler.sleep(attenteEnSecondes);
+			try {
+				Thread.sleep(attenteEnSecondes*1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// Récupérations des informations du serveur
 			tourCourantServeur = getTourCourant(ancienTour);
 			compteurAttente++;
