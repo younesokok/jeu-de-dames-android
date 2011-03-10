@@ -411,6 +411,7 @@ public class DamierView extends PlateauView {
 							index++;
 						}
 					}
+					tourCourant.getDeplacementsPionJoue().add(lastDeplacement.getNumeroCase());
 					// On incrémente le déplacement précédent
 					lastDeplacement = deplacement;
 				}
@@ -440,17 +441,17 @@ public class DamierView extends PlateauView {
 					}
 				}
 				
-				// On MAJ des déplacements du tour courant (il faut inverser)
-				List<Pion> mDeplacementsInverse = mDeplacements;
-				Collections.reverse(mDeplacementsInverse);
-				int i = 0;
-				for (Pion pion : mDeplacementsInverse) {
-					if (i == 0) {
-						i++;
-						continue;
-					}
-					tourCourant.getDeplacementsPionJoue().add(pion.getNumeroCase());
-				}
+//				// On MAJ des déplacements du tour courant (il faut inverser)
+//				List<Pion> mDeplacementsInverse = mDeplacements;
+//				Collections.reverse(mDeplacementsInverse);
+//				int i = 0;
+//				for (Pion pion : mDeplacementsInverse) {
+//					if (i == 0) {
+//						i++;
+//						continue;
+//					}
+//					tourCourant.getDeplacementsPionJoue().add(pion.getNumeroCase());
+//				}
 
 				// --- Envoi au serveur
 				communicationServeur.sendTourFini(tourCourant);
