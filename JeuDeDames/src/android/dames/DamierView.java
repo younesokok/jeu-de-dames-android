@@ -385,6 +385,8 @@ public class DamierView extends PlateauView {
 
 				
 				// --- Envoi au serveur
+				Log.i(tag, "Avant d'envoiyer sendTourFini");
+				Log.i(tag, tourCourant.toString());
 				communicationServeur.sendTourFini(tourCourant);
 
 				// --- Remise en attente
