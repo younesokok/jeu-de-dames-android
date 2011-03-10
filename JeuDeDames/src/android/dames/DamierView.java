@@ -2,9 +2,7 @@ package android.dames;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -127,6 +125,8 @@ public class DamierView extends PlateauView {
 	// ----------------------- Modèle -------------------- //
 
 	private void initNewGame() {
+		Log.i(tag, "InitNewGame");
+		mStatusText.setVisibility(INVISIBLE);
 		/* On vide les listes de pions et dames */
 		mPionsNoir.clear();
 		mPionsBlanc.clear();
@@ -382,7 +382,6 @@ public class DamierView extends PlateauView {
 				// Preparation pour l'envoi au serveur
 				tourCourant.preparerProchainTour();
 				// On enleve les pions/dames pris
-				// On en profite pour enregistrer les déplacements au tourCourant
 				Pion lastDeplacement = null;
 				for (Pion deplacement : mDeplacements) {
 					if (lastDeplacement == null) {
@@ -414,8 +413,6 @@ public class DamierView extends PlateauView {
 							index++;
 						}
 					}
-					// On ajoute le déplacement précédent au tourCourant (ce qui évite d'avoir le dernier déplacement qui est redondant)
-					tourCourant.getDeplacementsPionJoue().add(lastDeplacement.getNumeroCase());
 					// On incrémente le déplacement précédent
 					lastDeplacement = deplacement;
 				}
@@ -443,6 +440,18 @@ public class DamierView extends PlateauView {
 						}
 						index++;
 					}
+				}
+				
+				// On MAJ des déplacements du tour courant (il faut inverser)
+				List<Pion> mDeplacementsInverse = mDeplacements;
+				Collections.reverse(mDeplacementsInverse);
+				int i = 0;
+				for (Pion pion : mDeplacementsInverse) {
+					if (i == 0) {
+						i++;
+						continue;
+					}
+					tourCourant.getDeplacementsPionJoue().add(pion.getNumeroCase());
 				}
 
 				// --- Envoi au serveur
@@ -620,26 +629,22 @@ public class DamierView extends PlateauView {
 				initNewGame();
 				setMode(RUNNING);
 				updateView();
-				updateGame();
-				return (true);
 			}
-			if (mMode == PAUSE) {
+			else if (mMode == PAUSE) {
 				/*
 				 * On continue apres la pause
 				 */
 				setMode(RUNNING);
 				updateView();
-				return (true);
 			}
 			// Si jamais on est dans le mode RUNNING
-			if(mMode==RUNNING) {
+			else if(mMode==RUNNING) {
 				// Si on est sur la phase de selection du pion à jouer
 				if(mEtat==SELECT||mEtat==PLAY) {
 					if (mDeplacements.get(mDeplacements.size()-1).getY()>0){
 						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()-1);
 					}
 					updateView();
-					return(true);
 				}
 			}
 		}
@@ -651,7 +656,6 @@ public class DamierView extends PlateauView {
 						mDeplacements.get(mDeplacements.size()-1).setY(mDeplacements.get(mDeplacements.size()-1).getY()+1);
 					}
 					updateView();
-					return(true);
 				}
 			}
 		}
@@ -663,7 +667,6 @@ public class DamierView extends PlateauView {
 						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()-1);
 					}
 					updateView();
-					return(true);
 				}
 			}
 		}
@@ -675,16 +678,15 @@ public class DamierView extends PlateauView {
 						mDeplacements.get(mDeplacements.size()-1).setX(mDeplacements.get(mDeplacements.size()-1).getX()+1);
 					}
 					updateView();
-					return(true);
 				}
 			}
 		}
 
-		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
-			updateGame();
-			return true;
-		}
-
+//		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+//			updateGame();
+//			return true;
+//		}
+		updateGame();
 		return super.onKeyDown(keyCode, msg);
 	}
 
