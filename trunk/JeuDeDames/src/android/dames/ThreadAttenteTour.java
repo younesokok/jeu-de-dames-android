@@ -1,6 +1,6 @@
 package android.dames;
 
-import android.widget.Toast;
+import android.util.Log;
 
 public class ThreadAttenteTour extends Thread {
 	private DamierView damierView;
@@ -13,11 +13,11 @@ public class ThreadAttenteTour extends Thread {
 
 	@Override
 	public void run() {
-
+		// --- Récupération du tour de l'adversaire sur le serveur
 		int numeroAncienTour = tourCourant.getNumero();
-		
 		tourCourant = damierView.communicationServeur.attendreNouveauTour(tourCourant);
-
+		Log.i("threadattentetour", tourCourant.toString());
+		
 		// --- Maj du jeu en conséquence
 		damierView.mDeplacements.clear();
 		// Si on a besoin de modifier
@@ -55,6 +55,7 @@ public class ThreadAttenteTour extends Thread {
 				if(damierView.mCouleurJoueur == damierView.BLANC) {
 					for (Pion p : damierView.mPionsNoir) {
 						if (p.getNumeroCase() == pionMange) {
+							Log.i("threadattentetour", "pion mange : "+p.getNumeroCase());
 							damierView.mPionsNoir.remove(index);
 							break;
 						}
@@ -64,6 +65,7 @@ public class ThreadAttenteTour extends Thread {
 				if(damierView.mCouleurJoueur == damierView.NOIR) {
 					for (Pion p : damierView.mPionsBlanc) {
 						if (p.getNumeroCase() == pionMange) {
+							Log.i("threadattentetour", "pion mange : "+p.getNumeroCase());
 							damierView.mPionsBlanc.remove(index);
 							break;
 						}
@@ -95,6 +97,7 @@ public class ThreadAttenteTour extends Thread {
 			}
 		}
 
+		// -- Ajout de ce tour au damier
 		damierView.tourCourant = this.tourCourant;
 
 		// --- On rend la main au joueur
