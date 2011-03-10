@@ -35,7 +35,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 	/* --- Attributs --- */
 	private String url;
 	private final String tag = "CommucationServeur : ";
-	private final int attenteEnSecondes = 3;
+	private final int attenteEnSecondes = 6;
 	private final int nbAttenteMax = 400; // On attend 400x3s
 	private RefreshHandler mRefreshHandler = new RefreshHandler();
 	
