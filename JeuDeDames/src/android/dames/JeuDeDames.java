@@ -6,6 +6,7 @@ import android.dames.webservices.CommucationServeur;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -66,4 +67,5 @@ public class JeuDeDames extends Activity {
 			}
 		});
 	}
+	
 }
