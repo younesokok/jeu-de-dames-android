@@ -333,13 +333,13 @@ public class DamierView extends PlateauView {
 						index = 0;
 						for (Pion p : mMesPions) {
 							if(p.equalsPosition(positionPrecedente)){
-								mMesPions.set(index, positionCourante);
+								mMesPions.set(index, new Pion(positionCourante));
 								break;
 							}
 							index++;
 						}
 						// On permet de continuer le déplacement
-						mDeplacements.add(positionCourante);
+						mDeplacements.add(new Pion(positionCourante));
 						toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
 						toast.show();
 						setEtat(AFFICHE);

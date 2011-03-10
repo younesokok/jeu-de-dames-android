@@ -33,6 +33,11 @@ public class Pion {
 		y = newY;
 		type = 0;
 	}
+	public Pion(Pion pion) {
+		x = pion.getX();
+		y = pion.getY();
+		type = pion.getType();
+	}
 
 	public boolean equalsPosition(Pion aTester) {
 		if (x == aTester.x && y == aTester.y) {
