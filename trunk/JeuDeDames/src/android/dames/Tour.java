@@ -76,7 +76,7 @@ public class Tour implements Serializable {
 	public void setIdPartie(int idPartie) { this.idPartie = idPartie; }
 	public int getIdPartie() { return idPartie; }
 	public void setNumero(int numero) { this.numero = numero; }
-	public void incrNumero() { this.numero++; }
+	public void incrNumero() { this.numero = this.numero+1; }
 	public int getNumero() { return numero; }
 	public void setDeplacementsPionJoue(List<Integer> deplacementsPionJoue) { this.deplacementsPionJoue = deplacementsPionJoue; }
 	public void razDeplacementsPionJoue() { deplacementsPionJoue.clear(); }
