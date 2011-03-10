@@ -627,6 +627,8 @@ public class DamierView extends PlateauView {
 				initNewGame();
 				// On met en mode running : on enlève le texte et on met à jour le damier
 				setMode(RUNNING);
+				// On lance le jeu
+				updateGame();
 			}
 			else if (mMode == PAUSE) {
 				/*
@@ -681,9 +683,7 @@ public class DamierView extends PlateauView {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
 			updateGame();
-			return true;
 		}
-		updateGame();
 		return super.onKeyDown(keyCode, msg);
 	}
 
