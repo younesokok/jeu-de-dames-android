@@ -95,6 +95,7 @@ public class ThreadAttenteTour extends Thread {
 			}
 		}
 
+		damierView.tourCourant = this.tourCourant;
 
 		// --- On rend la main au joueur
 		//Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
