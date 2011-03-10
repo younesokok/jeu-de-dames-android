@@ -1,6 +1,7 @@
 package android.dames.webservices;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.xml.sax.XMLReader;
 
 import android.dames.DamierView;
 import android.dames.Tour;
+import android.dames.utils.RefreshHandler;
 import android.util.Log;
 
 /**
@@ -34,6 +36,7 @@ public class CommucationServeur implements CommucationServeurInterface {
 	private String url;
 	private final String tag = "CommucationServeur : ";
 	private final int nbAttenteMax = 400;
+	private RefreshHandler mRefreshHandler = new RefreshHandler();
 	
 	/* --- Constructeurs --- */
 	public CommucationServeur(String url) {
@@ -59,17 +62,13 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Tour tourCourantServeur = getTourCourant(ancienTour);
 		Log.i(tag, "*** tourCourant ***");
 		Log.i(tag, ancienTour.toString());
-		int attente = 5*1000; // 5s
+		int attenteEnSecondes = 5; // 5s
 		int compteurAttente = 0;
 		Log.i(tag, "*** tourCourant sur le serveur ***");
 		while (tourCourantServeur.getEtat() != DamierView.EN_COURS && compteurAttente < nbAttenteMax) {
 			Log.i(tag, tourCourantServeur.toString());
 			// Attente de attente secondes
-			try {
-				Thread.sleep(attente);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			mRefreshHandler.sleep(attenteEnSecondes);
 			// Récupérations des informations du serveur
 			tourCourantServeur = getTourCourant(ancienTour);
 			compteurAttente++;
@@ -95,17 +94,13 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Tour tourCourantServeur = getTourCourant(ancienTour);
 		Log.i(tag, "*** tourCourant ***");
 		Log.i(tag, ancienTour.toString());
-		int attente = 5*1000; // 5s
+		int attenteEnSecondes = 5; // 5s
 		int compteurAttente = 0;
 		Log.i(tag, "*** tourCourant sur le serveur ***");
 		while (tourCourantServeur.getNumero() <= ancienTour.getNumero() && compteurAttente < nbAttenteMax) {
 			Log.i(tag, tourCourantServeur.toString());
 			// Attente de attente secondes
-			try {
-				Thread.sleep(attente);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			mRefreshHandler.sleep(attenteEnSecondes);
 			// Récupérations des informations du serveur
 			tourCourantServeur = getTourCourant(ancienTour);
 			compteurAttente++;
@@ -183,10 +178,8 @@ public class CommucationServeur implements CommucationServeurInterface {
 		InputSource in = new InputSource();            
 		try {
 			// Récupération du contenu de l'URL
-//			Log.i("test", url.toString());
-//			url.openStream();
-//			Log.i("test", url.toString());
-			in.setByteStream(url.openStream());
+			InputStream inputStream = url.openStream();
+			in.setByteStream(inputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
