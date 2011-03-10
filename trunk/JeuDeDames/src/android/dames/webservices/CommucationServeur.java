@@ -35,7 +35,8 @@ public class CommucationServeur implements CommucationServeurInterface {
 	/* --- Attributs --- */
 	private String url;
 	private final String tag = "CommucationServeur : ";
-	private final int nbAttenteMax = 400;
+	private final int attenteEnSecondes = 3;
+	private final int nbAttenteMax = 400; // On attend 400x3s
 	private RefreshHandler mRefreshHandler = new RefreshHandler();
 	
 	/* --- Constructeurs --- */
@@ -62,7 +63,6 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Tour tourCourantServeur = getTourCourant(ancienTour);
 		Log.i(tag, "*** tourCourant ***");
 		Log.i(tag, ancienTour.toString());
-		int attenteEnSecondes = 5; // 5s
 		int compteurAttente = 0;
 		Log.i(tag, "*** tourCourant sur le serveur ***");
 		while (tourCourantServeur.getEtat() != DamierView.EN_COURS && compteurAttente < nbAttenteMax) {
@@ -94,7 +94,6 @@ public class CommucationServeur implements CommucationServeurInterface {
 		Tour tourCourantServeur = getTourCourant(ancienTour);
 		Log.i(tag, "*** tourCourant ***");
 		Log.i(tag, ancienTour.toString());
-		int attenteEnSecondes = 5; // 5s
 		int compteurAttente = 0;
 		Log.i(tag, "*** tourCourant sur le serveur ***");
 		while (tourCourantServeur.getNumero() <= ancienTour.getNumero() && compteurAttente < nbAttenteMax) {
