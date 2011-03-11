@@ -1,15 +1,18 @@
 package android.dames;
 
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 public class ThreadAttenteJoueur extends Thread {
 	private DamierView damierView;
 	private Tour tourCourant;
-	
-	public ThreadAttenteJoueur(DamierView damierView) {
+	private Handler mHandler;
+    
+	public ThreadAttenteJoueur(DamierView damierView, Handler mHandler) {
 		this.damierView = damierView;
 		this.tourCourant = damierView.tourCourant;
+		this.mHandler = mHandler;
 	}
 
 	@Override
@@ -21,6 +24,7 @@ public class ThreadAttenteJoueur extends Thread {
 		damierView.tourCourant = tourCourant;
 		Log.i("Debug", "TourCourant à l'arrivée : "+tourCourant);
 		damierView.setEtat(damierView.SELECT);
-		//damierView.updateView();
+		
+		mHandler.post(damierView.mUpdateView);
 	}
 }
