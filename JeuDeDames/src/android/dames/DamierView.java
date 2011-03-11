@@ -282,11 +282,17 @@ public class DamierView extends PlateauView {
 							index++;
 						}
 						// On permet de continuer le déplacement
-						mDeplacements.add(new Pion(positionCourante));
+						//mDeplacements.add(new Pion(positionCourante));
+
+						mDeplacements.add(new Pion(positionCourante.getX(), positionCourante.getY()));
 						toast = Toast.makeText(getContext(), "Validez votre prise dans le menu !", Toast.LENGTH_SHORT);
 						toast.show();
-						setEtat(AFFICHE);
-						updateGame();
+						// THOMAS : à mon avis il faut ici SELECT et
+						//setEtat(AFFICHE);
+						setEtat(SELECT);
+						// puis faire un updateview (en dessous) par game
+						// updateGame();
+						// enfin on réaffiche le pointeur et on peut reprendre etc.
 					}	
 					updateView();
 					return(true);
