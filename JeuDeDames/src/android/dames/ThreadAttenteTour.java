@@ -16,7 +16,6 @@ public class ThreadAttenteTour extends Thread {
 		// --- Récupération du tour de l'adversaire sur le serveur
 		int numeroAncienTour = tourCourant.getNumero();
 		tourCourant = damierView.communicationServeur.attendreNouveauTour(tourCourant);
-		Log.i("threadattentetour", tourCourant.toString());
 		
 		// --- Maj du jeu en conséquence
 		damierView.mDeplacements.clear();
@@ -53,20 +52,18 @@ public class ThreadAttenteTour extends Thread {
 			for (Integer pionMange : tourCourant.getPionsManges()) {
 				int index = 0;
 				if(damierView.mCouleurJoueur == damierView.BLANC) {
-					for (Pion p : damierView.mPionsNoir) {
+					for (Pion p : damierView.mPionsBlanc) {
 						if (p.getNumeroCase() == pionMange) {
-							Log.i("threadattentetour", "pion mange : "+p.getNumeroCase());
-							damierView.mPionsNoir.remove(index);
+							damierView.mPionsBlanc.remove(index);
 							break;
 						}
 						index++;
 					}
 				}
 				if(damierView.mCouleurJoueur == damierView.NOIR) {
-					for (Pion p : damierView.mPionsBlanc) {
+					for (Pion p : damierView.mPionsNoir) {
 						if (p.getNumeroCase() == pionMange) {
-							Log.i("threadattentetour", "pion mange : "+p.getNumeroCase());
-							damierView.mPionsBlanc.remove(index);
+							damierView.mPionsNoir.remove(index);
 							break;
 						}
 						index++;
