@@ -52,7 +52,7 @@ public class JeuDeDames extends Activity {
 		    	}
 		    	else {
 		    		tourCourant = communivationServeur.rejoindrePartie(pseudo);
-		    		Toast.makeText(getApplicationContext(), tourCourant.toString(), Toast.LENGTH_SHORT).show();
+		    		//Toast.makeText(getApplicationContext(), tourCourant.toString(), Toast.LENGTH_SHORT).show();
 		    	}
 				
 				/**

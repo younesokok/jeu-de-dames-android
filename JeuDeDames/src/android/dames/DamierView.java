@@ -144,7 +144,7 @@ public class DamierView extends PlateauView {
 
 	// ----------------------- Modèle -------------------- //
 
-	private void initNewGame() {
+	void initNewGame() {
 		/* On vide les listes de pions et dames */
 		mPionsNoir.clear();
 		mPionsBlanc.clear();
@@ -428,8 +428,8 @@ public class DamierView extends PlateauView {
 		bundle_damier.putIntArray("mPionsNoir", pionArrayListToArray(mPionsNoir));
 		bundle_damier.putIntArray("mPionsBlanc", pionArrayListToArray(mPionsBlanc));
 		bundle_damier.putIntArray("mSelection", pionArrayListToArray(mDeplacements));
-		bundle_damier.putInt("mScoreNoir", mScoreNoir);
-		bundle_damier.putInt("mScoreBlanc", mScoreBlanc);
+		bundle_damier.putInt("mEtat", mEtat);
+		bundle_damier.putInt("mMode", mMode);
 		bundle_damier.putSerializable("tourCourant", tourCourant);
 
 		return bundle_damier;
@@ -440,13 +440,11 @@ public class DamierView extends PlateauView {
 	 * @return bundle_damier
 	 */
 	public void restoreState(Bundle bundle_damier) {
-		setMode(PAUSE);
-
 		mPionsNoir = pionArrayToArrayList(bundle_damier.getIntArray("mPionsNoir"));
 		mPionsBlanc = pionArrayToArrayList(bundle_damier.getIntArray("mPionsBlanc"));
 		mDeplacements = pionArrayToArrayList(bundle_damier.getIntArray("mSelection"));
-		mScoreNoir = bundle_damier.getInt("mScoreNoir");
-		mScoreBlanc = bundle_damier.getInt("mScoreBlanc");
+		mMode = bundle_damier.getInt("mMode");
+		mEtat = bundle_damier.getInt("mEtat");
 		tourCourant = (Tour) bundle_damier.getSerializable("tourCourant");
 	}
 
@@ -485,7 +483,7 @@ public class DamierView extends PlateauView {
 			updatePionsNoir();
 			updatePionsBlanc();
 		}
-		if(mEtat==SELECT||mEtat==PLAY) {
+		if (mEtat==SELECT || mEtat==PLAY) {
 			clearCases();
 			updatePionsNoir();
 			updatePionsBlanc();
@@ -576,24 +574,8 @@ public class DamierView extends PlateauView {
 	public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			if (mMode == READY || mMode == LOSE) {
-				/*
-				 * Au debut ou en fin de partie on relance le jeu
-				 */
-				initNewGame();
-				// On met en mode running : on enlève le texte et on met à jour le damier
-				setMode(RUNNING);
-				// On lance le jeu
-				updateGame();
-			}
-			else if (mMode == PAUSE) {
-				/*
-				 * On continue apres la pause
-				 */
-				setMode(RUNNING);
-			}
 			// Si jamais on est dans le mode RUNNING
-			else if(mMode==RUNNING) {
+			if(mMode==RUNNING) {
 				// Si on est sur la phase de selection du pion à jouer
 				if(mEtat==SELECT||mEtat==PLAY) {
 					if (mDeplacements.get(mDeplacements.size()-1).getY()>0){
