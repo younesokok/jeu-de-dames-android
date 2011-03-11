@@ -537,7 +537,14 @@ public class DamierView extends PlateauView {
 		/* Creation du pointeur de selection */
 		if(newEtat==SELECT) {
 			if(mDeplacements.size()==0) {
-				mDeplacements.add(new Pion(0, 9));
+				// Si on est blanc on commence en bas
+				if (mCouleurJoueur == BLANC) {
+					mDeplacements.add(new Pion(0, (PlateauView.mNbCasesCote-1)));
+				}
+				// Sinon, en haut
+				else {
+					mDeplacements.add(new Pion(0, 0));
+				}
 			}	
 		}
 		mEtatPrecedent=mEtat;
