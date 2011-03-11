@@ -7,6 +7,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -106,6 +107,20 @@ public class DamierView extends PlateauView {
 	private Toast toast;
 	private final String tag = "DamierView : ";
 
+	// THOMAS : New handler d'evenement (http://developer.android.com/guide/appendix/faq/commontasks.html#threading)
+	/*
+	 * Handler pour les retours d'info de thread et autre événement
+	 */
+    final Handler mHandler = new Handler();
+    // Create runnable for posting
+    final Runnable mUpdateView = new Runnable() {
+        public void run() {
+    		Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
+            updateView();
+        }
+    };
+    
+    
 	/**
 	 * Constructeur
 	 * @param context
@@ -177,7 +192,7 @@ public class DamierView extends PlateauView {
 				// THOMAS : A mon avis il faut creer la methode ICI !!! et qu'elle fasse des updateView (ou invalidate) periodiquement
 				// Encore mieux : Créer un thread qui ne fasse qu'attendre et qui set l'Etat qui c'est ok.
 				// --> fait
-				Thread attente = new ThreadAttenteJoueur(this);
+				Thread attente = new ThreadAttenteJoueur(this,mHandler);
 				attente.start();
 				// THOMAS : Pourquoi pas d'updateView ici ? 
 				updateView();
@@ -191,7 +206,7 @@ public class DamierView extends PlateauView {
 				// --- Récupération des informations du serveur
 				// THOMAS : Idem, une thread pour éviter les pb d'attente
 				// 
-				Thread attente = new ThreadAttenteTour(this);
+				Thread attente = new ThreadAttenteTour(this,mHandler);
 				attente.start();
 				
 				updateView();

@@ -24,7 +24,6 @@ import org.xml.sax.XMLReader;
 
 import android.dames.DamierView;
 import android.dames.Tour;
-import android.dames.utils.RefreshHandler;
 import android.util.Log;
 
 /**
@@ -37,7 +36,6 @@ public class CommucationServeur implements CommucationServeurInterface {
 	private final String tag = "CommucationServeur : ";
 	private final int attenteEnSecondes = 2;
 	private final int nbAttenteMax = 400; // On attend 400x3s
-	private RefreshHandler mRefreshHandler = new RefreshHandler();
 	
 	/* --- Constructeurs --- */
 	public CommucationServeur(String url) {
