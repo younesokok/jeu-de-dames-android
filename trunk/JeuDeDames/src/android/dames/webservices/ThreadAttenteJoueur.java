@@ -32,6 +32,10 @@ public class ThreadAttenteJoueur extends Thread {
 			damierView.texteJoueurBlanc = PlateauView.JOUEUR_JE_JOUE;
 			damierView.texteJoueurNoir = PlateauView.JOUEUR_EN_ATTENTE_TOUR;
 		}
+		damierView.texteJoueurBlancCoupPrecedent = "";
+		damierView.texteJoueurNoirCoupPrecedent = "";
+		
+		
 		Log.i("Debug", "TourCourant à l'arrivée : "+tourCourant);
 		damierView.setEtat(damierView.SELECT);
 		

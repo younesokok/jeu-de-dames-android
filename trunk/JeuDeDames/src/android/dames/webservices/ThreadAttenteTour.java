@@ -29,6 +29,8 @@ public class ThreadAttenteTour extends Thread {
 			damierView.texteJoueurNoir = PlateauView.JOUEUR_J_ATTENTE_TOUR;
 			damierView.texteJoueurBlanc = PlateauView.JOUEUR_EN_JEU;
 		}
+		damierView.texteJoueurBlancCoupPrecedent = "";
+		damierView.texteJoueurNoirCoupPrecedent = "";
 		
 		// --- Récupération du tour de l'adversaire sur le serveur
 		int numeroAncienTour = tourCourant.getNumero();
@@ -122,15 +124,18 @@ public class ThreadAttenteTour extends Thread {
 			coupPrecedent.append(lettreX+":"+(pion.getY()+1)+";");
 		}
 		coupPrecedent.deleteCharAt(coupPrecedent.length()-1);
-		coupPrecedent.append(" \n "+PlateauView.JOUEUR_EN_ATTENTE_TOUR);
 		// Maj infos
 		if (damierView.mCouleurJoueur == DamierView.BLANC) {
 			damierView.texteJoueurBlanc = PlateauView.JOUEUR_JE_JOUE;
-			damierView.texteJoueurNoir = new String(coupPrecedent);
+			damierView.texteJoueurNoir = PlateauView.JOUEUR_EN_ATTENTE_TOUR;
+			damierView.texteJoueurBlancCoupPrecedent = "";
+			damierView.texteJoueurNoirCoupPrecedent = coupPrecedent.toString();
 		}
 		else {
 			damierView.texteJoueurNoir = PlateauView.JOUEUR_JE_JOUE;
-			damierView.texteJoueurBlanc = new String(coupPrecedent);
+			damierView.texteJoueurBlanc = PlateauView.JOUEUR_EN_ATTENTE_TOUR;
+			damierView.texteJoueurBlancCoupPrecedent = coupPrecedent.toString();
+			damierView.texteJoueurNoirCoupPrecedent = "";
 		}
 
 		// -- Ajout de ce tour au damier

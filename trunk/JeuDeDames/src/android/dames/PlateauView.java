@@ -22,6 +22,7 @@ public class PlateauView extends View {
 	private static int mMarge = 0;
 	private static int mPadding = 15;
 	private static int mTailleBitmapJoueur = 30;
+	private static int mTailleLettre = 20;
 	/* Offset du début de damier */
 	private static int mXOffset;
 	private static int mYOffset;
@@ -38,6 +39,8 @@ public class PlateauView extends View {
 	public final static String JOUEUR_JE_JOUE = "A moi de jouer !";
 	public String texteJoueurNoir = JOUEUR_INCONNU;
 	public String texteJoueurBlanc = JOUEUR_EN_ATTENTE_JOUEUR;
+	public String texteJoueurNoirCoupPrecedent = "";
+	public String texteJoueurBlancCoupPrecedent = "";
 	public Bitmap bitmapJoueurBlanc;
 	public Bitmap bitmapJoueurNoir;
 	
@@ -115,13 +118,15 @@ public class PlateauView extends View {
 		mPaint.setColor(Color.WHITE);
 		canvas.drawBitmap(bitmapJoueurNoir, mPadding, mPadding, mPaint);
 		canvas.drawText(texteJoueurNoir, mPadding+mTailleBitmapJoueur+mPadding, mPadding+mTailleBitmapJoueur/3, mPaint);
+		canvas.drawText(texteJoueurNoirCoupPrecedent, mPadding+mTailleBitmapJoueur+mPadding, mPadding+mTailleBitmapJoueur/3+mTailleLettre, mPaint);
 		// -- Damier
-		for (int x = 0; x < mNbCasesCote; x += 1) {
-//			canvas.drawText(""+((char) (x+97)), 
-//					mXOffset + x * mTailleCase,
-//					mYOffset,
-//					mPaint);
-			for (int y = 0; y < mNbCasesCote; y += 1) {
+		mPaint.setColor(Color.GRAY);
+		for (int x = 0; x < mNbCasesCote; x++) {
+			canvas.drawText(""+((char) (x+65)), 
+					mXOffset+x*mTailleCase+mTailleCase/2,
+					mYOffset-mTailleLettre/3,
+					mPaint);
+			for (int y = 0; y < mNbCasesCote; y++) {
 				if (mTableauCases[x][y] > 0) {
 					canvas.drawBitmap(mTypeCases[mTableauCases[x][y]], 
 							mXOffset + x * mTailleCase,
@@ -130,9 +135,17 @@ public class PlateauView extends View {
 				}
 			}
 		}
+		for (int y = 0; y < mNbCasesCote; y++) {
+			canvas.drawText(""+(y+1), 
+					mXOffset-mTailleLettre,
+					mYOffset+y*mTailleCase+mTailleCase/2,
+					mPaint);
+		}
 		// --- Joueur blanc
+		mPaint.setColor(Color.WHITE);
 		canvas.drawBitmap(bitmapJoueurBlanc, mPadding, mYOffset+(mTailleCase*mNbCasesCote)+mPadding, mPaint);
 		canvas.drawText(texteJoueurBlanc, mPadding+mTailleBitmapJoueur+mPadding, mYOffset+(mTailleCase*mNbCasesCote)+mPadding+mTailleBitmapJoueur/3, mPaint);
+		canvas.drawText(texteJoueurBlancCoupPrecedent, mPadding+mTailleBitmapJoueur+mPadding, mYOffset+(mTailleCase*mNbCasesCote)+mPadding+mTailleBitmapJoueur/3+mTailleLettre, mPaint);
 	}
 
 	/**
@@ -141,10 +154,10 @@ public class PlateauView extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		int cote = Math.min(w, h);
-		mTailleCase = (int) Math.floor((cote-mMarge) / mNbCasesCote);
+		mTailleCase = (int) Math.floor((cote-mMarge-mTailleLettre) / mNbCasesCote);
 
-		mXOffset = ((w - (mTailleCase * mNbCasesCote)) / 2);
-		mYOffset = ((h - (mTailleCase * mNbCasesCote)) / 2);
+		mXOffset = ((w - (mTailleCase * mNbCasesCote)) / 2)+mTailleLettre/2;
+		mYOffset = ((h - (mTailleCase * mNbCasesCote)) / 2)+mTailleLettre/2;
 
 		clearCases();
 	}
