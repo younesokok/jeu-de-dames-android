@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.dames.webservices.ThreadAttenteJoueur;
 import android.dames.webservices.ThreadAttenteTour;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -422,11 +423,13 @@ public class DamierView extends PlateauView {
 
 		bundle_damier.putIntArray("mPionsNoir", pionArrayListToArray(mPionsNoir));
 		bundle_damier.putIntArray("mPionsBlanc", pionArrayListToArray(mPionsBlanc));
-		bundle_damier.putIntArray("mSelection", pionArrayListToArray(mDeplacements));
+		bundle_damier.putIntArray("mDeplacements", pionArrayListToArray(mDeplacements));
 		bundle_damier.putInt("mEtat", mEtat);
+		bundle_damier.putInt("mEtatPrecedent", mEtatPrecedent);
 		bundle_damier.putInt("mMode", mMode);
+		bundle_damier.putInt("mCouleurJoueur", mCouleurJoueur);
 		bundle_damier.putSerializable("tourCourant", tourCourant);
-
+		
 		return bundle_damier;
 	}
 
@@ -437,9 +440,11 @@ public class DamierView extends PlateauView {
 	public void restoreState(Bundle bundle_damier) {
 		mPionsNoir = pionArrayToArrayList(bundle_damier.getIntArray("mPionsNoir"));
 		mPionsBlanc = pionArrayToArrayList(bundle_damier.getIntArray("mPionsBlanc"));
-		mDeplacements = pionArrayToArrayList(bundle_damier.getIntArray("mSelection"));
+		mDeplacements = pionArrayToArrayList(bundle_damier.getIntArray("mDeplacements"));
 		mMode = bundle_damier.getInt("mMode");
 		mEtat = bundle_damier.getInt("mEtat");
+		mCouleurJoueur = bundle_damier.getInt("mCouleurJoueur");
+		mEtatPrecedent = bundle_damier.getInt("mEtatPrecedent");
 		tourCourant = (Tour) bundle_damier.getSerializable("tourCourant");
 	}
 
@@ -473,6 +478,12 @@ public class DamierView extends PlateauView {
 	 * Mets à jour les pions si necessaire.
 	 */
 	public void updateView() {
+
+		this.invalidate();
+	}
+
+	@Override
+	protected void onDraw(Canvas canvas) {
 		if (mMode == RUNNING) {
 			clearCases();
 			updatePionsNoir();
@@ -484,9 +495,9 @@ public class DamierView extends PlateauView {
 			updatePionsBlanc();
 			updateDeplacements();
 		}
-		invalidate();
+		super.onDraw(canvas);
 	}
-
+	
 	private void updatePionsNoir() {
 		int index = 0;
 		for (Pion p : mPionsNoir) {
