@@ -1,5 +1,8 @@
-package android.dames;
+package android.dames.webservices;
 
+import android.dames.DamierView;
+import android.dames.Pion;
+import android.dames.Tour;
 import android.os.Handler;
 import android.util.Log;
 
@@ -50,6 +53,7 @@ public class ThreadAttenteTour extends Thread {
 						index++;
 					}
 				}
+				lastDeplacement = deplacement;
 			}
 			// Maj des pions mangés
 			for (Integer pionMange : tourCourant.getPionsManges()) {

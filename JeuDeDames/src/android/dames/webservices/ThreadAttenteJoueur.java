@@ -1,5 +1,7 @@
-package android.dames;
+package android.dames.webservices;
 
+import android.dames.DamierView;
+import android.dames.Tour;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
