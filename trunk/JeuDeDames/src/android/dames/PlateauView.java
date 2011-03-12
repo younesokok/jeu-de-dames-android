@@ -30,7 +30,7 @@ public class PlateauView extends View {
 	
 	// --- Paramètres serveur
 	private String url = "http://www.jeudedames.la-bnbox.fr/index.php";
-	protected CommucationServeur communicationServeur;
+	public CommucationServeur communicationServeur;
 
 	public PlateauView(Context context, AttributeSet attrs) {
 		super(context, attrs);

@@ -6,6 +6,8 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.dames.webservices.ThreadAttenteJoueur;
+import android.dames.webservices.ThreadAttenteTour;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -113,7 +115,7 @@ public class DamierView extends PlateauView {
 	 */
     final Handler mHandler = new Handler();
     // Create runnable for posting
-    final Runnable mUpdateView = new Runnable() {
+    public final Runnable mUpdateView = new Runnable() {
         public void run() {
     		Toast.makeText(getContext(), "A vous de jouer !", Toast.LENGTH_LONG).show();
             updateView();
@@ -392,21 +394,8 @@ public class DamierView extends PlateauView {
 					}
 				}
 				
-//				// On MAJ des déplacements du tour courant (il faut inverser)
-//				List<Pion> mDeplacementsInverse = mDeplacements;
-//				Collections.reverse(mDeplacementsInverse);
-//				int i = 0;
-//				for (Pion pion : mDeplacementsInverse) {
-//					if (i == 0) {
-//						i++;
-//						continue;
-//					}
-//					tourCourant.getDeplacementsPionJoue().add(pion.getNumeroCase());
-//				}
-
-				
 				// --- Envoi au serveur
-				Log.i(tag, "Avant d'envoiyer sendTourFini");
+				Log.i(tag, "Avant d'envoyer sendTourFini");
 				Log.i(tag, tourCourant.toString());
 				communicationServeur.sendTourFini(tourCourant);
 
