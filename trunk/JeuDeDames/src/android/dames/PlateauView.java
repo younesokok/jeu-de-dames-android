@@ -1,9 +1,11 @@
 package android.dames;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.dames.webservices.CommucationServeur;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -18,6 +20,8 @@ public class PlateauView extends View {
 	public static int mNbCasesCote = 10;
 	public static int mNbTotalCases = mNbCasesCote*mNbCasesCote;
 	private static int mMarge = 0;
+	private static int mPadding = 15;
+	private static int mTailleBitmapJoueur = 30;
 	/* Offset du début de damier */
 	private static int mXOffset;
 	private static int mYOffset;
@@ -25,6 +29,18 @@ public class PlateauView extends View {
 	private int[][] mTableauCases = new int[mNbCasesCote][mNbCasesCote]; 
 	/* Tableau contenant les representations des différentes types de cases */
 	private Bitmap[] mTypeCases; 
+	// Affichage dessus et dessous
+	public final static String JOUEUR_INCONNU = "Aucun adversaire n'a encore rejoint la partie";
+	public final static String JOUEUR_EN_ATTENTE_JOUEUR = "En attente de l'arrivée d'un adversaire";
+	public final static String JOUEUR_EN_ATTENTE_TOUR = "En attente du prochain tour";
+	public final static String JOUEUR_J_ATTENTE_TOUR = "J'attends mon tour";
+	public final static String JOUEUR_EN_JEU = "En train de joueur";
+	public final static String JOUEUR_JE_JOUE = "A moi de jouer !";
+	public String texteJoueurNoir = JOUEUR_INCONNU;
+	public String texteJoueurBlanc = JOUEUR_EN_ATTENTE_JOUEUR;
+	public Bitmap bitmapJoueurBlanc;
+	public Bitmap bitmapJoueurNoir;
+	
 
 	private final Paint mPaint = new Paint();
 	
@@ -35,11 +51,39 @@ public class PlateauView extends View {
 	public PlateauView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		communicationServeur = new CommucationServeur(url);
+		
+		// Image joueurs
+		Resources r = this.getContext().getResources();
+		bitmapJoueurBlanc = Bitmap.createBitmap(mTailleBitmapJoueur, mTailleBitmapJoueur, Bitmap.Config.ARGB_8888);
+		Canvas canvasTmp = new Canvas(bitmapJoueurBlanc);
+		Drawable sprite = r.getDrawable(R.drawable.joueur_blanc_petit);
+		sprite.setBounds(0, 0, mTailleBitmapJoueur, mTailleBitmapJoueur);
+		sprite.draw(canvasTmp);
+		
+		bitmapJoueurNoir = Bitmap.createBitmap(mTailleBitmapJoueur, mTailleBitmapJoueur, Bitmap.Config.ARGB_8888);
+		canvasTmp = new Canvas(bitmapJoueurNoir);
+		sprite = r.getDrawable(R.drawable.joueur_noir_petit);
+		sprite.setBounds(0, 0, mTailleBitmapJoueur, mTailleBitmapJoueur);
+		sprite.draw(canvasTmp);
 	}
 
 	public PlateauView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		communicationServeur = new CommucationServeur(url);
+		
+		// Image joueurs
+		Resources r = this.getContext().getResources();
+		bitmapJoueurBlanc = Bitmap.createBitmap(mTailleBitmapJoueur, mTailleBitmapJoueur, Bitmap.Config.ARGB_8888);
+		Canvas canvasTmp = new Canvas(bitmapJoueurBlanc);
+		Drawable sprite = r.getDrawable(R.drawable.joueur_blanc_petit);
+		sprite.setBounds(0, 0, mTailleBitmapJoueur, mTailleBitmapJoueur);
+		sprite.draw(canvasTmp);
+		
+		bitmapJoueurNoir = Bitmap.createBitmap(mTailleBitmapJoueur, mTailleBitmapJoueur, Bitmap.Config.ARGB_8888);
+		canvasTmp = new Canvas(bitmapJoueurNoir);
+		sprite = r.getDrawable(R.drawable.joueur_noir_petit);
+		sprite.setBounds(0, 0, mTailleBitmapJoueur, mTailleBitmapJoueur);
+		sprite.draw(canvasTmp);
 	}
 
 	/**
@@ -67,7 +111,16 @@ public class PlateauView extends View {
 	protected void onDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
+		// --- Joueur noir
+		mPaint.setColor(Color.WHITE);
+		canvas.drawBitmap(bitmapJoueurNoir, mPadding, mPadding, mPaint);
+		canvas.drawText(texteJoueurNoir, mPadding+mTailleBitmapJoueur+mPadding, mPadding+mTailleBitmapJoueur/3, mPaint);
+		// -- Damier
 		for (int x = 0; x < mNbCasesCote; x += 1) {
+//			canvas.drawText(""+((char) (x+97)), 
+//					mXOffset + x * mTailleCase,
+//					mYOffset,
+//					mPaint);
 			for (int y = 0; y < mNbCasesCote; y += 1) {
 				if (mTableauCases[x][y] > 0) {
 					canvas.drawBitmap(mTypeCases[mTableauCases[x][y]], 
@@ -77,6 +130,9 @@ public class PlateauView extends View {
 				}
 			}
 		}
+		// --- Joueur blanc
+		canvas.drawBitmap(bitmapJoueurBlanc, mPadding, mYOffset+(mTailleCase*mNbCasesCote)+mPadding, mPaint);
+		canvas.drawText(texteJoueurBlanc, mPadding+mTailleBitmapJoueur+mPadding, mYOffset+(mTailleCase*mNbCasesCote)+mPadding+mTailleBitmapJoueur/3, mPaint);
 	}
 
 	/**
