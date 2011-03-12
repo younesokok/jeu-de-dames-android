@@ -2,6 +2,7 @@ package android.dames.webservices;
 
 import android.dames.DamierView;
 import android.dames.Pion;
+import android.dames.PlateauView;
 import android.dames.Tour;
 import android.os.Handler;
 import android.util.Log;
@@ -19,6 +20,16 @@ public class ThreadAttenteTour extends Thread {
 
 	@Override
 	public void run() {
+		// --- Maj des infos
+		if (damierView.mCouleurJoueur == DamierView.BLANC) {
+			damierView.texteJoueurBlanc = PlateauView.JOUEUR_J_ATTENTE_TOUR;
+			damierView.texteJoueurNoir = PlateauView.JOUEUR_EN_JEU;
+		}
+		else {
+			damierView.texteJoueurNoir = PlateauView.JOUEUR_J_ATTENTE_TOUR;
+			damierView.texteJoueurBlanc = PlateauView.JOUEUR_EN_JEU;
+		}
+		
 		// --- Récupération du tour de l'adversaire sur le serveur
 		int numeroAncienTour = tourCourant.getNumero();
 		tourCourant = damierView.communicationServeur.attendreNouveauTour(tourCourant);
@@ -99,6 +110,27 @@ public class ThreadAttenteTour extends Thread {
 					}
 				}
 			}
+		}
+		
+		// --- Maj des infos
+		// Calcul string coup précédent
+		StringBuffer coupPrecedent = new StringBuffer("Coup précédent : ");
+		for (Integer deplacement : tourCourant.getDeplacementsPionJoue()) {
+			Pion pion = new Pion(0, 0);
+			pion.setXYParNumeroCase(deplacement);
+			char lettreX = (char) (pion.getX()+65);
+			coupPrecedent.append(lettreX+":"+(pion.getY()+1)+";");
+		}
+		coupPrecedent.deleteCharAt(coupPrecedent.length()-1);
+		coupPrecedent.append(" \n "+PlateauView.JOUEUR_EN_ATTENTE_TOUR);
+		// Maj infos
+		if (damierView.mCouleurJoueur == DamierView.BLANC) {
+			damierView.texteJoueurBlanc = PlateauView.JOUEUR_JE_JOUE;
+			damierView.texteJoueurNoir = new String(coupPrecedent);
+		}
+		else {
+			damierView.texteJoueurNoir = PlateauView.JOUEUR_JE_JOUE;
+			damierView.texteJoueurBlanc = new String(coupPrecedent);
 		}
 
 		// -- Ajout de ce tour au damier
