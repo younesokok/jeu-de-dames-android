@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RemoteViews.ActionException;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -631,18 +632,35 @@ public class DamierView extends PlateauView {
 		return super.onKeyDown(keyCode, msg);
 	}
 
-	
-	// TODO : Gérer le tactile
-	/* pour gérer le 100% tactile...
+	// pour gérer le 100% tactile...
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		float x = event.getX();
-		float y = event.getY();
-		this.onKeyDown(KeyEvent.KEYCODE_DPAD_UP, null);
-		Toast.makeText(getContext(), "X : "+x+" - Y : "+y, Toast.LENGTH_LONG).show();
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+		int xDamier = (int) this.getWidth();
+		int yDamier = (int) this.getHeight();
+		if(y<yDamier/3 && x>xDamier/3 && x<2*xDamier/3){
+			this.onKeyDown(KeyEvent.KEYCODE_DPAD_UP, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
+			Toast.makeText(getContext(), "Deplacement tactile : \n Haut", Toast.LENGTH_SHORT).show();
+		}
+		if(x>2*xDamier/3 && y>yDamier/3 && y<2*yDamier/3){
+			this.onKeyDown(KeyEvent.KEYCODE_DPAD_RIGHT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
+			Toast.makeText(getContext(), "Deplacement tactile : \n Droit", Toast.LENGTH_SHORT).show();
+		}
+		if(y>2*yDamier/3 && x>xDamier/3 && x<2*xDamier/3){
+			this.onKeyDown(KeyEvent.KEYCODE_DPAD_DOWN, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
+			Toast.makeText(getContext(), "Deplacement tactile : \n Bas", Toast.LENGTH_SHORT).show();
+		}
+		if(x<xDamier/3 && y>yDamier/3 && y<2*yDamier/3){
+			this.onKeyDown(KeyEvent.KEYCODE_DPAD_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
+			Toast.makeText(getContext(), "Deplacement tactile : \n Gauche", Toast.LENGTH_SHORT).show();
+		}
+		if(y>yDamier/3 && y<2*yDamier/3 && x>xDamier/3 && x<2*xDamier/3){
+			this.onKeyDown(KeyEvent.KEYCODE_DPAD_CENTER, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_CENTER));
+			Toast.makeText(getContext(), "Deplacement tactile : \n Entrée", Toast.LENGTH_SHORT).show();
+		}
 		return super.onTouchEvent(event);
 	}
-	*/
 
 	// ----------------------- Methodes annexes -------------------- //
 
