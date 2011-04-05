@@ -51,7 +51,6 @@ public class JeuDeDamesActivity extends Activity {
 			if (bundle_damier != null) {
 				Log.i(tag, "Reprise du jeu");
 				mDamierView.restoreState(bundle_damier);
-				//mDamierView.updateView();
 			} else {
 				mDamierView.setMode(DamierView.RUNNING);
 			}
